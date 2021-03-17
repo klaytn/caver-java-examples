@@ -21,18 +21,20 @@ import java.math.BigInteger;
 public class BoilerPlate {
     private static final String URL_NODE_API = "https://node-api.klaytnapi.com/v1/klaytn";
 
-    //Set a your KAS access key, secretAccessKey.
-    static String accessKey = "";
-    static String secretAccessKey = "";
+    // Configuration Part
+    // Set your KAS access key and secretAccessKey.
+    static String accessKey = "{your_accessKeyId}";
+    static String secretAccessKey = "{your_secretAccessKey}";
 
-    static String CHAIN_ID_BAOBOB = "1001";
-    static String CHAIN_ID_CYPRESS = "8217";
+    // static String CHAIN_ID_BAOBOB = "1001";
+    // static String CHAIN_ID_CYPRESS = "8217";
+    static String chainId = "1001";
 
     public static void main(String[] args) {
-        //build a Caver instance.
-        Caver caver = connectTestnet(accessKey, secretAccessKey);
+        // Build a Caver instance.
+        Caver caver = setCaver(accessKey, secretAccessKey, chainId);
 
-        //run a test.
+        // Run a test.
         test(caver);
     }
 
@@ -59,7 +61,7 @@ public class BoilerPlate {
             Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
 
             if(sendResult.hasError()) {
-                //do something to handle error
+                // Do something to handle error
                 throw new TransactionException(sendResult.getError().getMessage());
             }
             String txHash = sendResult.getResult();
@@ -88,17 +90,9 @@ public class BoilerPlate {
             System.out.println(vtReceiptData.getStatus());
 
         } catch (IOException | TransactionException e) {
-            // do something to handle exception.
+            // Do something to handle exception.
             e.printStackTrace();
         }
-    }
-
-    private static Caver connectTestnet(String accessKey, String secretAccessKey) {
-        return setCaver(accessKey, secretAccessKey, CHAIN_ID_BAOBOB);
-    }
-
-    private static Caver connectMainnet(String accessKey, String secretAccessKey) {
-        return setCaver(accessKey, secretAccessKey, CHAIN_ID_CYPRESS);
     }
 
     private static Caver setCaver(String accessKey, String secretAccessKey, String chainID) {
