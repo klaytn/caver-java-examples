@@ -17,16 +17,15 @@ public class BoilerPlate {
     static String CHAIN_ID_CYPRESS = "8217";
 
     public static void main(String[] args) {
-        //Build a Caver instance.
+        //build a Caver instance.
         Caver caver = connectTestnet(accessKey, secretAccessKey);
-//        Caver caver = connectMainnet(accessKey, secretAccessKey);
 
-        //test!
+        //run a test.
         test(caver);
     }
 
     public static void test(Caver caver) {
-        //Copy and pasted test code here!
+        //Copy and pasted test code here.
         try {
             System.out.println(caver.rpc.klay.getBlockNumber().send().getValue());
         } catch (IOException e) {
@@ -38,7 +37,7 @@ public class BoilerPlate {
         return setCaver(accessKey, secretAccessKey, CHAIN_ID_BAOBOB);
     }
 
-    private static Caver connectMainnet(String accessKey, String secretAccessKey, String chainID) {
+    private static Caver connectMainnet(String accessKey, String secretAccessKey) {
         return setCaver(accessKey, secretAccessKey, CHAIN_ID_CYPRESS);
     }
 
