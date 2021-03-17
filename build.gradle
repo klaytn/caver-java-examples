@@ -16,6 +16,13 @@ dependencies {
     compile 'com.klaytn.caver:core:1.5.7'
 }
 
+task runMain(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.klaytn.caver.boilerplate.BoilerPlate"
+}
+
 test {
     useJUnitPlatform()
 }
