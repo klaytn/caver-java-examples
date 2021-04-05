@@ -2,6 +2,9 @@ package com.klaytn.caver.boilerplate;
 
 import com.klaytn.caver.Caver;
 import com.klaytn.caver.account.Account;
+import com.klaytn.caver.contract.SendOptions;
+import com.klaytn.caver.kct.kip17.KIP17;
+import com.klaytn.caver.kct.kip7.KIP7;
 import com.klaytn.caver.methods.response.AccountKey;
 import com.klaytn.caver.methods.response.Bytes32;
 import com.klaytn.caver.methods.response.TransactionReceipt;
@@ -16,6 +19,7 @@ import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 
 public class BoilerPlate {
@@ -39,58 +43,31 @@ public class BoilerPlate {
     }
 
     public static void test(Caver caver) {
-        String testAddress = "0x{address}";
         String testPrivateKey = "0x{private key}";
 
-        SingleKeyring keyring = (SingleKeyring) KeyringFactory.create(testAddress, testPrivateKey);
-        caver.wallet.add(keyring);
-
-        String newKey = KeyringFactory.generateSingleKey();
-        SingleKeyring newKeyring = KeyringFactory.create(testAddress, newKey);
-        Account account = newKeyring.toAccount();
-
-        AccountUpdate accountUpdate = new AccountUpdate.Builder()
-                .setKlaytnCall(caver.rpc.klay)
-                .setFrom(testAddress)
-                .setAccount(account)
-                .setGas(BigInteger.valueOf(50000))
-                .build();
+        SingleKeyring deployerKeyring = KeyringFactory.createFromPrivateKey(testPrivateKey);
+        caver.wallet.add(deployerKeyring);
 
         try {
-            caver.wallet.sign(testAddress, accountUpdate);
-            Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
+            //Deploy KIP-17(NFT) token contract
+            KIP17 kip17 = KIP17.deploy(caver, deployerKeyring.getAddress(), "Klaytn NFT", "KNFT");
+            System.out.println("Deployed contract address : " + kip17.getContractAddress());
 
-            if(sendResult.hasError()) {
-                // Do something to handle error
-                throw new TransactionException(sendResult.getError().getMessage());
-            }
-            String txHash = sendResult.getResult();
+            //Mint a NFT token
+            BigInteger tokenId = BigInteger.ONE;
+            String uri = "http://test.url";
+            TransactionReceipt.TransactionReceiptData mintReceiptData = kip17.mintWithTokenURI(deployerKeyring.getAddress(), tokenId, uri, new SendOptions(deployerKeyring.getAddress()));
+            System.out.println("NFT mint transaction hash : " + mintReceiptData.getTransactionHash());
 
-            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
-            TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
+            //Transfer a NFT token
+            TransactionReceipt.TransactionReceiptData transferReceiptData = kip17.transferFrom(deployerKeyring.getAddress(), deployerKeyring.getAddress(), tokenId, new SendOptions(deployerKeyring.getAddress()));
+            System.out.println("NFT transfer transaction hash : " + transferReceiptData.getTransactionHash());
 
-            AccountKey accountKey = caver.rpc.klay.getAccountKey(testAddress).send();
-            System.out.println("Account Key Type: " + accountKey.getResult().getType());
+            //Burn a NFT token
+            TransactionReceipt.TransactionReceiptData burnReceiptData = kip17.burn(tokenId, new SendOptions(deployerKeyring.getAddress()));
+            System.out.println("NFT burn transaction hash : " + burnReceiptData.getTransactionHash());
 
-
-            keyring = (SingleKeyring)caver.wallet.updateKeyring(newKeyring);
-
-            ValueTransfer vt = new ValueTransfer.Builder()
-                    .setKlaytnCall(caver.rpc.getKlay())
-                    .setFrom(testAddress)
-                    .setTo(testAddress)
-                    .setValue(BigInteger.valueOf(1))
-                    .setGas(BigInteger.valueOf(25000))
-                    .build();
-
-            caver.wallet.sign(testAddress, vt);
-
-            Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
-            TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult());
-            System.out.println(vtReceiptData.getStatus());
-
-        } catch (IOException | TransactionException e) {
-            // Do something to handle exception.
+        } catch (NoSuchMethodException | IOException | InstantiationException | ClassNotFoundException | IllegalAccessException | InvocationTargetException | TransactionException e) {
             e.printStackTrace();
         }
     }
