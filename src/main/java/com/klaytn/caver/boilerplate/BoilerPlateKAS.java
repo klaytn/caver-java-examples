@@ -43,26 +43,31 @@ public class BoilerPlateKAS {
             //Deploy KIP-17(NFT) token contract
             Kip17TransactionStatusResponse deployedResponse = caver.kas.kip17.deploy("Klaytn NFT", "NFT", contractAlias);
             TransactionReceipt.TransactionReceiptData deployedReceiptData = processor.waitForTransactionReceipt(deployedResponse.getTransactionHash());
-            System.out.println("Deployed contract address : " + deployedReceiptData.getContractAddress());
+            System.out.println("---------------> Deployed contract address : " + deployedReceiptData.getContractAddress());
+
+            Thread.sleep(2000);
 
             //Mint a NFT token
             BigInteger tokenId = BigInteger.ONE;
             String uri = "http://test.url";
             Kip17TransactionStatusResponse mintedResponse = caver.kas.kip17.mint(contractAlias, account.getAddress(), tokenId, uri);
             TransactionReceipt.TransactionReceiptData mintReceiptData = processor.waitForTransactionReceipt(mintedResponse.getTransactionHash());
-            System.out.println("NFT mint transaction hash : " + mintReceiptData.getContractAddress());
+            System.out.println("---------------> NFT mint transaction hash : " + mintReceiptData.getContractAddress());
 
+            Thread.sleep(2000);
 
             //Transfer a NFT token
             Kip17TransactionStatusResponse transferResponse = caver.kas.kip17.transfer(contractAlias, account.getAddress(), account.getAddress(), account.getAddress(), tokenId);
             TransactionReceipt.TransactionReceiptData transferReceiptData = processor.waitForTransactionReceipt(transferResponse.getTransactionHash());
-            System.out.println("NFT transfer transaction hash : " + transferReceiptData.getTransactionHash());
+            System.out.println("---------------> NFT transfer transaction hash : " + transferReceiptData.getTransactionHash());
+
+            Thread.sleep(2000);
 
             //Burn a NFT token
             Kip17TransactionStatusResponse burnResponse = caver.kas.kip17.burn(contractAlias, account.getAddress(), tokenId);
             TransactionReceipt.TransactionReceiptData burnReceiptData = processor.waitForTransactionReceipt(burnResponse.getTransactionHash());
-            System.out.println("NFT burn transaction hash : " + burnReceiptData.getTransactionHash());
-        } catch (ApiException | TransactionException | IOException e) {
+            System.out.println("---------------> NFT burn transaction hash : " + burnReceiptData.getTransactionHash());
+        } catch (ApiException | TransactionException | IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
