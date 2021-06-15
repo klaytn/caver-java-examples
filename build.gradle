@@ -13,16 +13,16 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    compile 'com.klaytn.caver:core:1.5.7'
-    compile "ch.qos.logback:logback-core:1.2.3",
+    implementation 'com.klaytn.caver:core:1.6.2'
+    implementation "ch.qos.logback:logback-core:1.2.3",
             "ch.qos.logback:logback-classic:1.2.3"
 }
 
-task runMain(type: JavaExec) {
-    group = "Execution"
-    description = "Run the main class with JavaExecTask"
+task contractDeploy(type: JavaExec) {
+    group = "BoilerPlate for caver.contract"
+    description = "Run boiler plate code for deploying smart contract using caver.contract."
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.BoilerPlate"
+    main = "com.klaytn.caver.boilerplate.contract.deploy.BoilerPlate"
 }
 
 test {
