@@ -16,29 +16,29 @@ Commands:
 
 Usage examples:
 -------------------------------------------------
-$ ./$cli_name decoupled_account/update_account_with_account_key_public
-$ ./$cli_name decoupled_account/update_account_with_account_key_role_based
-$ ./$cli_name decoupled_account/update_account_with_account_key_weighted_multisig
-$ ./$cli_name smart_contract/deploy_smart_contract
-$ ./$cli_name smart_contract/execute_smart_contract
+$ ./$cli_name update_account_with_account_key_public
+$ ./$cli_name update_account_with_account_key_role_based
+$ ./$cli_name update_account_with_account_key_weighted_multisig
+$ ./$cli_name deploy_smart_contract
+$ ./$cli_name execute_smart_contract
 "
   exit 1
 }
 
 case "$1" in
-  decoupled_account/update_account_with_account_key_public)
+  update_account_with_account_key_public)
     ./gradlew decoupledAccountUpdateAccountWithAccountKeyPublic
     ;;
-  decoupled_account/update_account_with_account_key_role_based)
+  update_account_with_account_key_role_based)
     ./gradlew decoupledAccountUpdateAccountWithAccountKeyRoleBased
     ;;
-  decoupled_account/update_account_with_account_key_weighted_multisig)
+  update_account_with_account_key_weighted_multisig)
     ./gradlew decoupledAccountUpdateAccountWithAccountKeyWeightedMultisig
     ;;
-  smart_contract/deploy_smart_contract)
+  deploy_smart_contract)
     ./gradlew smartContractDeploySmartContract
     ;;
-  smart_contract/execute_smart_contract)
+  execute_smart_contract)
     ./gradlew smartContractExecuteSmartContract
     ;;
   -h|--help|*)
