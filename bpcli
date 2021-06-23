@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -e
+export BPCLI_WORKDIR=$(cd $(dirname $0) && pwd)
+
+cli_help() {
+  cli_name=${0##*/}
+  echo "
+$cli_name
+BoilerPlate CLI for caver-java
+Usage: $cli_name <Commands>
+
+Commands:
+   <subject>/<scenario>
+   -h        Help
+   --help        Help
+
+Usage examples:
+-------------------------------------------------
+$ ./$cli_name decoupled_account/update_account_with_account_key_public
+$ ./$cli_name decoupled_account/update_account_with_account_key_role_based
+$ ./$cli_name decoupled_account/update_account_with_account_key_weighted_multisig
+$ ./$cli_name smart_contract/deploy_smart_contract
+$ ./$cli_name smart_contract/execute_smart_contract
+"
+  exit 1
+}
+
+case "$1" in
+  decoupled_account/update_account_with_account_key_public)
+    ./gradlew decoupledAccountUpdateAccountWithAccountKeyPublic
+    ;;
+  decoupled_account/update_account_with_account_key_role_based)
+    ./gradlew decoupledAccountUpdateAccountWithAccountKeyRoleBased
+    ;;
+  decoupled_account/update_account_with_account_key_weighted_multisig)
+    ./gradlew decoupledAccountUpdateAccountWithAccountKeyWeightedMultisig
+    ;;
+  smart_contract/deploy_smart_contract)
+    ./gradlew smartContractDeploySmartContract
+    ;;
+  smart_contract/execute_smart_contract)
+    ./gradlew smartContractExecuteSmartContract
+    ;;
+  -h|--help|*)
+    cli_help
+    ;;
+esac

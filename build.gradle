@@ -18,11 +18,39 @@ dependencies {
             "ch.qos.logback:logback-classic:1.2.3"
 }
 
-task contractDeploy(type: JavaExec) {
+task decoupledAccountUpdateAccountWithAccountKeyPublic(type: JavaExec) {
     group = "BoilerPlate for caver.contract"
-    description = "Run boiler plate code for deploying smart contract using caver.contract."
+    description = "Run boiler plate code for updating account with accountKeyPublic."
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.contract.deploy.BoilerPlate"
+    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_public.BoilerPlate"
+}
+
+task decoupledAccountUpdateAccountWithAccountKeyRoleBased(type: JavaExec) {
+    group = "BoilerPlate for caver.contract"
+    description = "Run boiler plate code for updating account with accountKeyRoleBased."
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_role_based.BoilerPlate"
+}
+
+task decoupledAccountUpdateAccountWithAccountKeyWeightedMultisig(type: JavaExec) {
+    group = "BoilerPlate for caver.contract"
+    description = "Run boiler plate code for updating account with accountKeyRoleBased."
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_weighted_multisig.BoilerPlate"
+}
+
+task smartContractDeploySmartContract(type: JavaExec) {
+    group = "BoilerPlate for caver.contract"
+    description = "Run boiler plate code for deploying smart contract."
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.klaytn.caver.boilerplate.smart_contract.deploy_smart_contract.BoilerPlate"
+}
+
+task smartContractExecuteSmartContract(type: JavaExec) {
+    group = "BoilerPlate for caver.contract"
+    description = "Run boiler plate code for executing smart contract."
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.klaytn.caver.boilerplate.smart_contract.execute_smart_contract.BoilerPlate"
 }
 
 test {
