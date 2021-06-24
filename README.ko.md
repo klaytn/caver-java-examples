@@ -27,6 +27,7 @@ KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main
 4. caver-java-boilerplate 프로젝트의 코드 중 원하는 시나리오에 해당하는 BoilerPlate 소스코드를 복사하신 뒤 2번에서 생성한 `src > main > java > BoilerPlate.java`파일에 복사 붙여넣기를 합니다.
 5. 붙여넣은 내용 중 맨 위에 위치한 package 구문을 삭제하도록 합니다.
 6. 붙여넣은 코드 중 `accessKeyId`와 `secretAccessKey`는 KAS에서 발급받으신 본인의 계정 정보를 넣어주셔야 하고 `chainId`는 테스트하고자 하는 체인의 아이디(Baobab TestNet의 아이디 `1001` 또는 Cypress MainNet의 아이디 `8217`)를 넣어주시면 됩니다.
+7. 그 후 해당 프로젝트 루트 디렉토리에서 `./gradlew run`을 실행하시면 됩니다.
 
 ## License
 caver-java-boilerplate is released under the [MIT license](./LICENSE).
