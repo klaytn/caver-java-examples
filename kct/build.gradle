@@ -1,0 +1,7 @@
+description 'boiilerPlate for KCT layer'
+
+task deploy_kip7_token_contract(type: JavaExec) {
+    group = "BoilerPlate for caver.kct"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "deploy_kip7_token_contract.BoilerPlate"
+}

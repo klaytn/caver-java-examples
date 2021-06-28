@@ -5,61 +5,23 @@ plugins {
 group 'com.klaytn'
 version '1.0'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    implementation 'com.klaytn.caver:core:1.6.2'
-    implementation "ch.qos.logback:logback-core:1.2.3",
-            "ch.qos.logback:logback-classic:1.2.3"
-}
+subprojects {
+    apply plugin: 'java'
 
-task run(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code"
-    classpath = sourceSets.main.runtimeClasspath
-    main = "BoilerPlate"
-}
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-task decoupledAccountUpdateAccountWithAccountKeyPublic(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code for updating account with accountKeyPublic."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_public.BoilerPlate"
-}
-
-task decoupledAccountUpdateAccountWithAccountKeyRoleBased(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code for updating account with accountKeyRoleBased."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_role_based.BoilerPlate"
-}
-
-task decoupledAccountUpdateAccountWithAccountKeyWeightedMultisig(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code for updating account with accountKeyRoleBased."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.decoupled_account.update_account_with_account_key_weighted_multisig.BoilerPlate"
-}
-
-task smartContractDeploySmartContract(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code for deploying smart contract."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.smart_contract.deploy_smart_contract.BoilerPlate"
-}
-
-task smartContractExecuteSmartContract(type: JavaExec) {
-    group = "BoilerPlate for caver.contract"
-    description = "Run boilerplate code for executing smart contract."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.klaytn.caver.boilerplate.smart_contract.execute_smart_contract.BoilerPlate"
-}
-
-test {
-    useJUnitPlatform()
+    dependencies {
+        implementation 'com.klaytn.caver:core:1.6.2'
+        implementation 'io.github.cdimascio:dotenv-java:2.2.0'
+        implementation "ch.qos.logback:logback-core:1.2.3",
+                "ch.qos.logback:logback-classic:1.2.3"
+    }
 }

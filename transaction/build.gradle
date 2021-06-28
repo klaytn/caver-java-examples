@@ -1,0 +1,7 @@
+description 'boiilerPlate for Transaction layer'
+
+task send_klay(type: JavaExec) {
+    group = "BoilerPlate for caver.transaction"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "send_klay.BoilerPlate"
+}

@@ -1,2 +1,10 @@
 rootProject.name = 'caver-java-boilerplate'
 
+include 'abi'
+include 'account'
+include 'contract'
+include 'kct'
+include 'rpc'
+include 'transaction'
+include 'utils'
+include 'wallet'

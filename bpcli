@@ -10,36 +10,43 @@ BoilerPlate CLI for caver-java
 Usage: $cli_name <Commands>
 
 Commands:
-   <subject>/<scenario>
+   <common_architecture_layer>/<scenario>
    -h        Help
    --help        Help
 
 Usage examples:
 -------------------------------------------------
-$ ./$cli_name update_account_with_account_key_public
-$ ./$cli_name update_account_with_account_key_role_based
-$ ./$cli_name update_account_with_account_key_weighted_multisig
-$ ./$cli_name deploy_smart_contract
-$ ./$cli_name execute_smart_contract
+$ ./$cli_name account/update_account_with_account_key_public
+$ ./$cli_name account/update_account_with_account_key_role_based
+$ ./$cli_name account/update_account_with_account_key_weighted_multisig
+$ ./$cli_name contract/deploy_smart_contract
+$ ./$cli_name contract/execute_smart_contract
+$ ./$cli_name contract/fee_delegation
 "
   exit 1
 }
 
 case "$1" in
-  update_account_with_account_key_public)
-    ./gradlew decoupledAccountUpdateAccountWithAccountKeyPublic
+  account/update_account_with_account_key_public)
+    ./gradlew account:update_account_with_account_key_public
     ;;
-  update_account_with_account_key_role_based)
-    ./gradlew decoupledAccountUpdateAccountWithAccountKeyRoleBased
+  account/update_account_with_account_key_role_based)
+    ./gradlew account:update_account_with_account_key_role_based
     ;;
-  update_account_with_account_key_weighted_multisig)
-    ./gradlew decoupledAccountUpdateAccountWithAccountKeyWeightedMultisig
+  account/update_account_with_account_key_weighted_multisig)
+    ./gradlew account:update_account_with_account_key_weighted_multisig
     ;;
-  deploy_smart_contract)
-    ./gradlew smartContractDeploySmartContract
+  contract/deploy_smart_contract)
+    ./gradlew contract:deploy_smart_contract
     ;;
-  execute_smart_contract)
-    ./gradlew smartContractExecuteSmartContract
+  contract/execute_smart_contract)
+    ./gradlew contract:execute_smart_contract
+    ;;
+  rpc/klay_get_block_receipts)
+    ./gradlew rpc:klay_get_block_receipts
+    ;;
+  transaction:send_klay)
+    ./gradlew transaction:send_klay
     ;;
   -h|--help|*)
     cli_help
