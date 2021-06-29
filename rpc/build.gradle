@@ -1,7 +1,0 @@
-description 'boiilerPlate for RPC layer'
-
-task klay_get_block_receipts(type: JavaExec) {
-    group = "BoilerPlate for caver.rpc"
-    classpath = sourceSets.main.runtimeClasspath
-    main = "klay_get_block_receipts.BoilerPlate"
-}
