@@ -43,11 +43,11 @@ public class BoilerPlate {
     }
 
     public static void loadEnv() {
-        Dotenv env = Dotenv.configure()
-                .directory("../..")
-                .ignoreIfMalformed()
-                .ignoreIfMissing()
-                .load();
+        Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
+        if (env.get("NODE_API_URL") == null) {
+            // This handle the situation when user tries to run BoilerPlate code from project root directory
+            env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
+        }
 
         nodeApiUrl = nodeApiUrl.equals("") ? env.get("NODE_API_URL") : nodeApiUrl;
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
