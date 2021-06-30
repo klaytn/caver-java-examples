@@ -11,8 +11,10 @@ repositories {
 }
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
 
 dependencies {
     implementation 'com.klaytn.caver:core:1.6.2'
@@ -22,7 +24,7 @@ dependencies {
 }
 
 task run(type: JavaExec) {
-    group = "BoilerPlate"
+    group = "Boilerplate"
     classpath = sourceSets.main.runtimeClasspath
-    main = "BoilerPlate"
+    mainClass.set("Boilerplate")
 }

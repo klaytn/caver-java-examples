@@ -24,7 +24,7 @@ dependencies {
 }
 
 task run(type: JavaExec) {
-    group = "BoilerPlate"
+    group = "Boilerplate"
     classpath = sourceSets.main.runtimeClasspath
     mainClass.set("Boilerplate")
 }
