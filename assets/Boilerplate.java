@@ -2,12 +2,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.methods.response.BlockTransactionReceipts;
+import com.klaytn.caver.account.Account;
+import com.klaytn.caver.account.WeightedMultiSigOptions;
+import com.klaytn.caver.methods.response.AccountKey;
+import com.klaytn.caver.methods.response.Bytes32;
+import com.klaytn.caver.methods.response.TransactionReceipt;
+import com.klaytn.caver.transaction.TxPropertyBuilder;
+import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
+import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
+import com.klaytn.caver.transaction.type.AccountUpdate;
+import com.klaytn.caver.transaction.type.ValueTransfer;
+import com.klaytn.caver.wallet.keyring.RoleBasedKeyring;
+import com.klaytn.caver.wallet.keyring.SingleKeyring;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
+import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
-import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * BoilerPlate code about "How to ..."
@@ -20,6 +34,9 @@ public class BoilerPlate {
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
+    private static String senderAddress = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+    private static String senderPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+
 
     public static void main(String[] args) {
         loadEnv();
@@ -42,6 +59,8 @@ public class BoilerPlate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
+        senderAddress = senderPrivateKey.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
     }
 
     public static void run() {
@@ -55,8 +74,7 @@ public class BoilerPlate {
 
             Caver caver = new Caver(httpService);
 
-            BlockTransactionReceipts blockTransactionReceipts = caver.rpc.klay.getBlockReceipts("0xeb5ce356d33b63c6489e7ac5120822dc82d419cdd197dc6bc0164e550ef74c8b").send();
-            System.out.println(objectToString(blockTransactionReceipts));
+            System.out.println("Start writing BoilerPlate code for any scenario.");
         } catch (Exception e) {
             e.printStackTrace();
         }

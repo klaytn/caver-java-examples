@@ -2,6 +2,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
+import com.klaytn.caver.methods.response.BlockTransactionReceipts;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
@@ -9,16 +10,16 @@ import org.web3j.protocol.http.HttpService;
 import java.io.IOException;
 
 /**
- * BoilerPlate code about "How to send Klay."
+ * BoilerPlate code about "How to ..."
+ * Related article - Korean:
+ * Related article - English:
  */
-public class BoilerPlate {
+public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String deployerAddress = ""; // e.g. "0xf5d3322418f2f2257d9255ad4a7ff1d50312d438"
-    private static String deployerPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
 
     public static void main(String[] args) {
         loadEnv();
@@ -41,8 +42,6 @@ public class BoilerPlate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
-        deployerAddress = deployerAddress.equals("") ? env.get("DEPLOYER_ADDRESS") : deployerAddress;
-        deployerPrivateKey = deployerPrivateKey.equals("") ? env.get("DEPLOYER_PRIVATE_KEY") : deployerPrivateKey;
     }
 
     public static void run() {
@@ -55,7 +54,9 @@ public class BoilerPlate {
             httpService.addHeader("x-chain-id", chainId);
 
             Caver caver = new Caver(httpService);
-            // Sending klay related source codes...
+
+            BlockTransactionReceipts blockTransactionReceipts = caver.rpc.klay.getBlockReceipts("0xeb5ce356d33b63c6489e7ac5120822dc82d419cdd197dc6bc0164e550ef74c8b").send();
+            System.out.println(objectToString(blockTransactionReceipts));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,7 +3,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
 import com.klaytn.caver.account.Account;
-import com.klaytn.caver.account.WeightedMultiSigOptions;
 import com.klaytn.caver.methods.response.AccountKey;
 import com.klaytn.caver.methods.response.Bytes32;
 import com.klaytn.caver.methods.response.TransactionReceipt;
@@ -12,7 +11,6 @@ import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
 import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
 import com.klaytn.caver.transaction.type.AccountUpdate;
 import com.klaytn.caver.transaction.type.ValueTransfer;
-import com.klaytn.caver.wallet.keyring.RoleBasedKeyring;
 import com.klaytn.caver.wallet.keyring.SingleKeyring;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
@@ -20,15 +18,13 @@ import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 
 /**
- * BoilerPlate code about "How to ..."
- * Related article - Korean:
- * Related article - English:
+ * BoilerPlate code about "How to Update Klaytn Account Keys with Caver #1 — AccountKeyPublic"
+ * Related article - Korean: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
+ * Related article - English: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
  */
-public class BoilerPlate {
+public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
@@ -58,8 +54,6 @@ public class BoilerPlate {
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
         privateKey = privateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : privateKey;
-
-        System.out.println(privateKey);
     }
 
     public static void run() {
@@ -73,7 +67,57 @@ public class BoilerPlate {
 
             Caver caver = new Caver(httpService);
 
-            System.out.println("Start writing BoilerPlate code for any scenario.");
+            // 요 밑부터 catch 전까지 테크 블로그 최종 실행 소스코드로 들어가는 식으로
+            SingleKeyring keyring = caver.wallet.keyring.createFromPrivateKey(privateKey);
+            caver.wallet.add(keyring);
+            String newKey = caver.wallet.keyring.generateSingleKey();
+            System.out.println("new private key: " + newKey);
+
+            SingleKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newKey);
+            Account account = newKeyring.toAccount();
+            // 핵심되는 코드 영역만 보여주면 된다.
+            AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
+                    TxPropertyBuilder.accountUpdate()
+                            .setFrom(keyring.getAddress())
+                            .setAccount(account)
+                            .setGas(BigInteger.valueOf(50000))
+            );
+
+            caver.wallet.sign(keyring.getAddress(), accountUpdate);
+
+            Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
+            if (sendResult.hasError()) {
+                throw new TransactionException(sendResult.getError().getMessage());
+            }
+            String txHash = sendResult.getResult();
+            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
+            TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
+
+            System.out.println("Account Update Transaction receipt => ");
+            System.out.println(objectToString(receiptData));
+
+            AccountKey accountKey = caver.rpc.klay.getAccountKey(keyring.getAddress()).send();
+
+            System.out.println("Result of account key update to AccountKeyPublic");
+            System.out.println("Account address: " + keyring.getAddress());
+            System.out.println("accountKey => ");
+            System.out.println(objectToString(accountKey));
+
+            caver.wallet.updateKeyring(newKeyring);
+            ValueTransfer vt = caver.transaction.valueTransfer.create(
+                    TxPropertyBuilder.valueTransfer()
+                            .setFrom(keyring.getAddress())
+                            .setTo(keyring.getAddress())
+                            .setValue(BigInteger.valueOf(1))
+                            .setGas(BigInteger.valueOf(25000))
+            );
+            caver.wallet.sign(keyring.getAddress(), vt);
+
+            Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
+            TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult());
+
+            System.out.println("After account update value transfer transaction receipt => ");
+            System.out.println(objectToString(vtReceiptData));
         } catch (Exception e) {
             e.printStackTrace();
         }

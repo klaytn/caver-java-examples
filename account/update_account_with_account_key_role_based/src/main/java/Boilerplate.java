@@ -28,7 +28,7 @@ import java.util.List;
  * Related article - Korean: https://medium.com/klaytn/caver-js%EB%A1%9C-%EB%82%B4-%EA%B3%84%EC%A0%95%EC%9D%98-%ED%82%A4%EB%A5%BC-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95-3-accountkeyrolebased-bef4d109b467
  * Related article - English:
  */
-public class BoilerPlate {
+public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";

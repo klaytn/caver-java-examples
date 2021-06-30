@@ -7,7 +7,7 @@ This project is a caver-java boilerplate project.
 To connet Klaytn EN, this project used KAS's [NODE API](https://refs.klaytnapi.com/en/node/latest).
 
 If you haven't signed up for [KAS](https://www.klaytnapi.com/ko/landing/main) yet, you need to sign up and get an KAS access key and secret key.
-- Set your access key, secret key, and chain id in BoilerPlate class.
+- Set your access key, secret key, and chain id in Boilerplate class.
 - Copy and paste a test code in `test()` method.
 - Run a main method.
   - If you want to execute main method through terminal, you can execute `main()` method through `./gradlew runMain` command.

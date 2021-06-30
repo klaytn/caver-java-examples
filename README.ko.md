@@ -8,19 +8,24 @@
 * [OpenJDK 8 (LTS)](https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot)
 * [Gradle 7.1](https://gradle.org/install/)
 
-### 1.1 KAS 회원가입
+### 1.2 KAS 회원가입
 Caver SDK는 [Klaytn EndpointNode(이하 Klaytn EN)](https://docs.klaytn.com/node/endpoint-node)와 함께 사용할 수 있도록 만들어져 있습니다.
 EN을 직접 운영하지 않아도 본 BoilerPlate에 있는 예제코드들을 사용하실 수 있도록, caver-java-boilerplate 프로젝트는 KAS의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
 
-KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main)에 가입하셔야 합니다. 가입하시면 BoilerPlate 코드 실행에 필요한 `access key id`와 `secret access key`를 발급받으실 수 있습니다.
-발급받은 `access key id`와 `secret access key`는 BoilerPlate 코드 실행에 필요합니다.
+KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main)에 가입하셔야 합니다. 가입하시면 Boilerplate 코드 실행에 필요한 `access key id`와 `secret access key`를 발급받으실 수 있습니다.
+발급받은 `access key id`와 `secret access key`는 Boilerplate 코드 실행에 필요합니다.
+
+### 1.3 계정 준비
+5 KLAY 이상을 보유하고 있는 계정을 3개 이상 준비해주시면 좋습니다.
+wallet의 계정 생성 시나리오를 실행하셔서 계정들을 생성하셔서 해당 계정들을 
+https://baobab.wallet.klaytn.com/faucet
 
 ## 2. 사용법
 > 본 caver-java-boiler-plate 프로젝트를 그대로 클론해서 사용하시는 방법입니다.
 1. 이 프로젝트를 클론합니다. `$ git clone https://github.com/klaytn/caver-java-boilerplate.git`
 2. [KAS](https://www.klaytnapi.com/ko/landing/main)에서 본인의 계정으로 발급받은 credential 정보와 실습에 사용하실 클레이튼 계정들의 주소와 개인키 값을 설정합니다. 실습에 사용하시는 계정은 테스트 용도의 계정 사용을 권장드립니다.
-   * 옵션 1(권장): `caver-java-boilerplate/.env` 파일의 내용을 채워주도록 합니다. 이 파일에 채우신 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/BoilerPlate.java` 파일의 `loadEnv` 메서드에 .env 파일에 정의된 변수들을 읽어들이는 코드가 있으니 참고해주세요.
-   * 옵션 2: 원하는 시나리오에 해당하는 `BoilerPlate.java` 파일을 열고 BoilerPlate class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
+   * 옵션 1(권장): `caver-java-boilerplate/.env` 파일의 내용을 채워주도록 합니다. 이 파일에 채우신 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/Boilerplate.java` 파일의 `loadEnv` 메서드에 `.env` 파일에 정의된 변수들을 읽어들이는 코드가 있으니 참고해주세요.
+   * 옵션 2: 원하는 시나리오에 해당하는 `Boilerplate.java` 파일을 열고 Boilerplate class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
 3. 사용하시는 터미널에서 원하는 시나리오로 디렉토리를 이동하신 뒤 `./gradlew run`을 실행합니다.
    * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
    * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`

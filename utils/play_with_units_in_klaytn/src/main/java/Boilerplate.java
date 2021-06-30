@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
 import com.klaytn.caver.account.Account;
+import com.klaytn.caver.account.WeightedMultiSigOptions;
 import com.klaytn.caver.methods.response.AccountKey;
 import com.klaytn.caver.methods.response.Bytes32;
 import com.klaytn.caver.methods.response.TransactionReceipt;
@@ -11,26 +12,33 @@ import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
 import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
 import com.klaytn.caver.transaction.type.AccountUpdate;
 import com.klaytn.caver.transaction.type.ValueTransfer;
+import com.klaytn.caver.utils.Utils;
+import com.klaytn.caver.wallet.keyring.RoleBasedKeyring;
 import com.klaytn.caver.wallet.keyring.SingleKeyring;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * BoilerPlate code about "How to Update Klaytn Account Keys with Caver #1 — AccountKeyPublic"
- * Related article - Korean: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
- * Related article - English: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
+ * BoilerPlate code about "How to use Klay Units."
+ * Related article - Korean: https://ko.docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
+ * Related reference - English: https://docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
  */
-public class BoilerPlate {
+public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String privateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+    private static String senderAddress= ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String senderPrivateKey = "";
+    private static String recipientAddress= ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
         loadEnv();
@@ -53,7 +61,9 @@ public class BoilerPlate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
-        privateKey = privateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : privateKey;
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
+        recipientAddress = recipientAddress.equals("") ? env.get("RECIPIENT_ADDRESS") : recipientAddress;
     }
 
     public static void run() {
@@ -66,56 +76,40 @@ public class BoilerPlate {
             httpService.addHeader("x-chain-id", chainId);
 
             Caver caver = new Caver(httpService);
-
-            SingleKeyring keyring = caver.wallet.keyring.createFromPrivateKey(privateKey);
+            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(keyring);
-            String newKey = caver.wallet.keyring.generateSingleKey();
-            System.out.println("new private key: " + newKey);
 
-            SingleKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newKey);
-            Account account = newKeyring.toAccount();
-            AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
-                    TxPropertyBuilder.accountUpdate()
-                            .setFrom(keyring.getAddress())
-                            .setAccount(account)
-                            .setGas(BigInteger.valueOf(50000))
-            );
-
-            caver.wallet.sign(keyring.getAddress(), accountUpdate);
-
-            Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
-            if (sendResult.hasError()) {
-                throw new TransactionException(sendResult.getError().getMessage());
-            }
-            String txHash = sendResult.getResult();
-            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
-            TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
-
-            System.out.println("Account Update Transaction receipt => ");
-            System.out.println(objectToString(receiptData));
-
-            AccountKey accountKey = caver.rpc.klay.getAccountKey(keyring.getAddress()).send();
-
-            System.out.println("Result of account key update to AccountKeyPublic");
-            System.out.println("Account address: " + keyring.getAddress());
-            System.out.println("accountKey => ");
-            System.out.println(objectToString(accountKey));
-
-            caver.wallet.updateKeyring(newKeyring);
+            // Because a field "value" always interprets its value as a unit "peb",
+            // you must take care what is the actual value when you sending some KLAY.
             ValueTransfer vt = caver.transaction.valueTransfer.create(
                     TxPropertyBuilder.valueTransfer()
-                            .setFrom(keyring.getAddress())
-                            .setTo(keyring.getAddress())
-                            .setValue(BigInteger.valueOf(1))
-                            .setGas(BigInteger.valueOf(25000))
+                        .setFrom(senderAddress)
+                        .setTo(recipientAddress)
+                        .setGas(BigInteger.valueOf(25000))
+                        .setValue(BigInteger.ONE)
             );
-            caver.wallet.sign(keyring.getAddress(), vt);
+            // Example-1: Sending 0.5 KLAY to recipient
+            // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.5 KLAY,
+            // option-1: Set actual peb value directly to ValueTransfer transaction instance.
+            vt.setValue(BigInteger.valueOf(500000000000000000L)); // 5 * (10^17)
+            System.out.println("Example-1) The value what we set using option-1 is " + vt.getValue());
 
-            Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
-            TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult());
+            // option-2 (Recommended): option-1 is very cumbersome and difficult to read. Let's use more elegant way.
+            String KLAY = caver.utils.convertToPeb(BigDecimal.valueOf(5), Utils.KlayUnit.KLAY);
+            BigInteger bigIntegerKLAY = new BigInteger(KLAY).divide(BigInteger.valueOf(10));
+            vt.setValue(bigIntegerKLAY);
+            System.out.println("Example-1) The value what we set using option-2 is " + vt.getValue());
 
-            System.out.println("After account update value transfer transaction receipt => ");
-            System.out.println(objectToString(vtReceiptData));
+            // Example-2: Sending 0.005 KLAY to recipient
+            // option-1: Use bigIntegerKLAY we created at option-2 of Example-1.
+            vt.setValue(bigIntegerKLAY.divide(BigInteger.valueOf(100)));
+            System.out.println("Example-2) The value what we set using option-1 is " + vt.getValue());
+
+            // option-2 (Recommended): option-1 has a high probability of being wrong by human error. Let's use more secure methomethodd.
+            String mKLAY = caver.utils.convertToPeb(BigDecimal.valueOf(5), Utils.KlayUnit.mKLAY);
+            BigInteger bigIntegerUKLAY = new BigInteger(mKLAY);
+            vt.setValue(bigIntegerUKLAY);
+            System.out.println("Example-2) The value what we set using option-2 is " + vt.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }
