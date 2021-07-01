@@ -69,7 +69,6 @@ public class Boilerplate {
 
             Caver caver = new Caver(httpService);
 
-            // 요 밑부터 catch 전까지 테크 블로그 최종 실행 소스코드로 들어가는 식으로
             SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(keyring);
             String newKey = caver.wallet.keyring.generateSingleKey();
@@ -77,7 +76,6 @@ public class Boilerplate {
 
             SingleKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newKey);
             Account account = newKeyring.toAccount();
-            // 핵심되는 코드 영역만 보여주면 된다.
             AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
                     TxPropertyBuilder.accountUpdate()
                             .setFrom(keyring.getAddress())
