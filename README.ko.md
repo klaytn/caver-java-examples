@@ -10,15 +10,17 @@
 
 ### 1.2 KAS 회원가입
 Caver SDK는 [Klaytn EndpointNode(이하 Klaytn EN)](https://docs.klaytn.com/node/endpoint-node)와 함께 사용할 수 있도록 만들어져 있습니다.
-EN을 직접 운영하지 않아도 본 BoilerPlate에 있는 예제코드들을 사용하실 수 있도록, caver-java-boilerplate 프로젝트는 KAS의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
+EN을 직접 운영하지 않아도 본 Boilerplate에 있는 예제코드들을 사용하실 수 있도록, caver-java-boilerplate 프로젝트는 KAS의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
 
 KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main)에 가입하셔야 합니다. 가입하시면 Boilerplate 코드 실행에 필요한 `access key id`와 `secret access key`를 발급받으실 수 있습니다.
 발급받은 `access key id`와 `secret access key`는 Boilerplate 코드 실행에 필요합니다.
 
 ### 1.3 계정 준비
-5 KLAY 이상을 보유하고 있는 계정을 3개 이상 준비해주시면 좋습니다.
-wallet의 계정 생성 시나리오를 실행하셔서 계정들을 생성하셔서 해당 계정들을 
-https://baobab.wallet.klaytn.com/faucet
+5 KLAY 이상을 보유하고 있는 테스트 용도의 계정을 3개 이상 준비해주시기 바랍니다.
+* https://baobab.wallet.klaytn.com/create 에서 테스트용 계정을 생성하실 수 있습니다.
+* 생성하신 테스트 계정으로 https://baobab.wallet.klaytn.com/faucet 에서 테스트용 5 KLAY를 충전하실 수 있습니다.
+
+향후 다시 테스트하실 때 생성하신 테스트용 계정들을 재사용하실 수 있으니 계정의 주소와 개인키를 기억할 수 있는 곳에 잘 보관해두시는 것을 추천드립니다.
 
 ## 2. 사용법
 > 본 caver-java-boiler-plate 프로젝트를 그대로 클론해서 사용하시는 방법입니다.

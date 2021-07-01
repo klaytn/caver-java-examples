@@ -34,7 +34,8 @@ public class Boilerplate {
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String privateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+    private static String senderAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String senderPrivateKey = ""; // e.g. "0x42f5375b608c2672fadb2ed9fd78c5c453ca3aa860c43192ad910c3269727fc7"
 
     public static void main(String[] args) {
         loadEnv();
@@ -57,9 +58,8 @@ public class Boilerplate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
-        privateKey = privateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : privateKey;
-
-        System.out.println(privateKey);
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
     }
 
     public static void run() {
@@ -74,7 +74,7 @@ public class Boilerplate {
             Caver caver = new Caver(httpService);
 
             System.out.println("=====> Update AccountKey to AccountKeyRoleBased");
-            SingleKeyring keyring = caver.wallet.keyring.createFromPrivateKey(privateKey);
+            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(keyring);
 
             List<String[]> newRoleBasedKeys = caver.wallet.keyring.generateRolBasedKeys(new int[]{2, 1, 3});

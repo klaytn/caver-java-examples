@@ -30,7 +30,8 @@ public class Boilerplate {
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String privateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+    private static String senderAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String senderPrivateKey = ""; // e.g. "0x39a6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc1"
 
     public static void main(String[] args) {
         loadEnv();
@@ -53,7 +54,8 @@ public class Boilerplate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
-        privateKey = privateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : privateKey;
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
     }
 
     public static void run() {
@@ -68,7 +70,7 @@ public class Boilerplate {
             Caver caver = new Caver(httpService);
 
             // 요 밑부터 catch 전까지 테크 블로그 최종 실행 소스코드로 들어가는 식으로
-            SingleKeyring keyring = caver.wallet.keyring.createFromPrivateKey(privateKey);
+            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(keyring);
             String newKey = caver.wallet.keyring.generateSingleKey();
             System.out.println("new private key: " + newKey);

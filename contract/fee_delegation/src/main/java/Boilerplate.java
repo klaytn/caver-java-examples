@@ -11,17 +11,19 @@ import org.web3j.protocol.http.HttpService;
 import java.math.BigInteger;
 
 /**
- * BoilerPlate code about "How to use Fee Delegation with Contract" <br>
+ * Boilerplate code about "How to use Fee Delegation with Contract" <br>
  * Related article - Korean: https://medium.com/klaytn/caver-contract%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EC%88%98%EC%88%98%EB%A3%8C%EB%A5%BC-%EB%8C%80%EB%82%A9%ED%95%B4%EB%B3%B4%EC%9E%90-4c046900c4ed
  * Related article - English: https://medium.com/klaytn/caver-how-to-use-fee-delegation-with-contract-c599388c7cc0
  */
-public class BoilerPlate {
+public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
-    private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
-    private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
+    private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT3KJQFUPY8Z";
+    private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/h2b69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String senderPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
+    private static String senderAddress= ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String senderPrivateKey = ""; // e.g. "0x42f3179b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269237fc7"
+    private static String feePayerAddress= ""; // e.g. "0xf23ef03f7ce238abaf03c5b133237bfbe25cd17c"
     private static String feePayerPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
 
     public static void main(String[] args) {
@@ -32,7 +34,7 @@ public class BoilerPlate {
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
         if (env.get("NODE_API_URL") == null) {
-            // This handle the situation when user tries to run BoilerPlate code from project root directory
+            // This handle the situation when user tries to run Boilerplate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
 
@@ -40,7 +42,10 @@ public class BoilerPlate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
         senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
+        feePayerAddress = feePayerAddress.equals("") ? env.get("FEE_PAYER_ADDRESS") : feePayerAddress;
         feePayerPrivateKey = feePayerPrivateKey.equals("") ? env.get("FEE_PAYER_PRIVATE_KEY") : feePayerPrivateKey;
     }
 
@@ -58,10 +63,10 @@ public class BoilerPlate {
             /**
              * 1. Adding test account to in-memory wallet
              */
-            SingleKeyring sender = caver.wallet.keyring.createFromPrivateKey(senderPrivateKey);
+            SingleKeyring sender = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(sender);
 
-            SingleKeyring feePayer = caver.wallet.keyring.createFromPrivateKey(feePayerPrivateKey);
+            SingleKeyring feePayer = caver.wallet.keyring.create(feePayerAddress, feePayerPrivateKey);
             caver.wallet.add(feePayer);
 
 

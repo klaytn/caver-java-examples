@@ -2,34 +2,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.account.Account;
-import com.klaytn.caver.account.WeightedMultiSigOptions;
-import com.klaytn.caver.methods.response.AccountKey;
-import com.klaytn.caver.methods.response.Bytes32;
+import com.klaytn.caver.contract.SendOptions;
+import com.klaytn.caver.kct.kip7.KIP7;
+import com.klaytn.caver.kct.kip7.KIP7DeployParams;
 import com.klaytn.caver.methods.response.TransactionReceipt;
-import com.klaytn.caver.transaction.TxPropertyBuilder;
-import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
-import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
-import com.klaytn.caver.transaction.type.AccountUpdate;
-import com.klaytn.caver.transaction.type.ValueTransfer;
-import com.klaytn.caver.wallet.keyring.*;
+import com.klaytn.caver.wallet.keyring.AbstractKeyring;
+import com.klaytn.caver.wallet.keyring.KeyStore;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.ObjectMapperFactory;
-import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
-import javax.swing.*;
 import java.io.File;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 /**
- * BoilerPlate code about "How to send KLAY with keystore file."
+ * BoilerPlate code about "How to deploy my own KIP7 token with keystore file."
  * Related article - Korean: https://medium.com/klaytn/common-architecture-of-caver-f7a7a1c554de
  * Related article - English: https://medium.com/klaytn/common-architecture-of-caver-a714224a0047
  */
@@ -39,7 +27,7 @@ public class Boilerplate {
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
-    private static String recipientAddress= ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String recipientAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
         loadEnv();
@@ -93,19 +81,29 @@ public class Boilerplate {
             AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
 
             caver.wallet.add(keyring);
-            ValueTransfer vt = caver.transaction.valueTransfer.create(
-                    TxPropertyBuilder.valueTransfer()
-                        .setFrom(keyring.getAddress())
-                        .setTo(recipientAddress)
-                        .setValue(BigInteger.ONE)
-                        .setGas(BigInteger.valueOf(25000))
+            KIP7DeployParams params = new KIP7DeployParams(
+                    "TestToken",
+                    "TTK",
+                    18,
+                    new BigInteger("1000000000000000000")
             );
-            caver.wallet.sign(keyring.getAddress(), vt);
-            Bytes32 result = caver.rpc.klay.sendRawTransaction(vt).send();
-            System.out.println(objectToString(result));
+            KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
+            System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
 
-            if (result.getError() == null) {
-                System.out.println("Succeed to send KLAY. Transaction hash: " + result.getResult());
+            SendOptions opts = new SendOptions();
+            opts.setFrom(keyring.getAddress());
+            TransactionReceipt.TransactionReceiptData r = kip7.transfer(
+                    recipientAddress,
+                    BigInteger.ONE,
+                    opts
+            );
+            if (r.getTxError() == null) {
+                System.out.printf(
+                        "Succeed to send 1 TestToken from %s to %s.",
+                        keyring.getAddress(),
+                        recipientAddress
+                );
+                System.out.println(objectToString(r));
             }
         } catch (Exception e) {
             e.printStackTrace();
