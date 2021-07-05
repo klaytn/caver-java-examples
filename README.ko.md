@@ -10,10 +10,10 @@
 
 ### 1.2 KAS 회원가입
 Caver SDK는 [Klaytn EndpointNode(이하 Klaytn EN)](https://docs.klaytn.com/node/endpoint-node)와 함께 사용할 수 있도록 만들어져 있습니다.
-EN을 직접 운영하지 않아도 본 Boilerplate에 있는 예제코드들을 사용하실 수 있도록, caver-java-examples 프로젝트는 KAS의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
+[EN](https://docs.klaytn.com/node/endpoint-node)을 직접 운영하지 않아도 본 예제코드들을 테스트해볼 수 있도록, caver-java-examples 프로젝트는 [KAS](https://klaytnapi.com)의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
 
-KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main)에 가입하셔야 합니다. 가입하시면 Boilerplate 코드 실행에 필요한 `access key id`와 `secret access key`를 발급받으실 수 있습니다.
-발급받은 `access key id`와 `secret access key`는 Boilerplate 코드 실행에 필요합니다.
+KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입하셔야 합니다. 가입하시면 예제코드 실행에 필요한 `access key id`와 `secret access key`를 발급받으실 수 있습니다.
+발급받은 `access key id`와 `secret access key`는 [2. 사용법](https://github.com/klaytn/caver-java-examples/blob/master/README.ko.md#2-%EC%82%AC%EC%9A%A9%EB%B2%95) 섹션을 참고하셔서 적절한 위치에 값을 넣어주신 후 사용하시면 됩니다.
 
 ### 1.3 계정 준비
 5 KLAY 이상을 보유하고 있는 테스트 용도의 계정을 3개 이상 준비해주시기 바랍니다.
@@ -23,14 +23,35 @@ KAS를 사용하기 위해서는 [KAS](https://www.klaytnapi.com/ko/landing/main
 향후 다시 테스트하실 때 생성하신 테스트용 계정들을 재사용하실 수 있으니 계정의 주소와 개인키를 기억할 수 있는 곳에 잘 보관해두시는 것을 추천드립니다.
 
 ## 2. 사용법
-> 본 caver-java-examples 프로젝트를 그대로 클론해서 사용하시는 방법입니다.
 1. 이 프로젝트를 클론합니다. `$ git clone https://github.com/klaytn/caver-java-examples.git`
 2. [KAS](https://www.klaytnapi.com/ko/landing/main)에서 본인의 계정으로 발급받은 credential 정보와 실습에 사용하실 클레이튼 계정들의 주소와 개인키 값을 설정합니다. 실습에 사용하시는 계정은 테스트 용도의 계정 사용을 권장드립니다.
-   * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용을 채워주도록 합니다. 이 파일에 채우신 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/Boilerplate.java` 파일의 `loadEnv` 메서드에 `.env` 파일에 정의된 변수들을 읽어들이는 코드가 있으니 참고해주세요.
+   * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용을 채워주도록 합니다. 이 파일에 채우신 값들은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/Boilerplate.java` 파일의 `loadEnv` 메서드에 `.env` 파일에 정의된 변수들을 읽어들이는 코드가 있으니 참고해주세요.
    * 옵션 2: 원하는 시나리오에 해당하는 `Boilerplate.java` 파일을 열고 Boilerplate class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
 3. 사용하시는 터미널에서 원하는 시나리오로 디렉토리를 이동하신 뒤 `./gradlew run`을 실행합니다.
    * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
    * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`
+
+## 3. 프로젝트 구조
+> caver-java-examples 프로젝트의 구조에 대한 이해를 돕기 위해 작성한 세션입니다.
+
+디렉토리 트리의 가장 첫 번째 레벨에는 [Common Architecture를 구성하는 레이어들](https://kips.klaytn.com/KIPs/kip-34#layer-diagram-of-the-common-architecture)이 위치해 있습니다. 편의상 아래 설명부터는 `CA-Layers`라고 표기하도록 하겠습니다.
+```
+.
+├── abi
+├── account
+├── ...
+└── wallet
+```
+
+CA-Layers 바로 밑에는 **예제 시나리오들**이 위치하게 됩니다. 일례로 `account` 레이어에는 다음과 같은 예제 시나리오들이 위치해 있습니다.
+```
+account
+├── update_account_with_account_key_public
+├── update_account_with_account_key_role_based
+└── update_account_with_account_key_weighted_multisig
+```
+* 각 시나리오들은 `build.gradle`, `settings.gradle`을 가지고 있습니다.
+* 이는 사용자 분들이 바로 시나리오 디렉토리에서 예제를 바로 실행해보실 수 있도록 구성하기 위함입니다.
 
 ## License
 **caver-java-examples** is released under the [MIT license](./LICENSE).
