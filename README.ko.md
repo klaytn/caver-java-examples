@@ -34,6 +34,7 @@ KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입하셔야
 ## 3. 프로젝트 구조
 > caver-java-examples 프로젝트의 구조에 대한 이해를 돕기 위해 작성한 세션입니다.
 
+### 3.1 CA-Layer/시나리오
 디렉토리 트리의 가장 첫 번째 레벨에는 [Common Architecture를 구성하는 레이어들](https://kips.klaytn.com/KIPs/kip-34#layer-diagram-of-the-common-architecture)이 위치해 있습니다. 편의상 아래 설명부터는 `CA-Layers`라고 표기하도록 하겠습니다.
 ```
 .
@@ -43,7 +44,7 @@ KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입하셔야
 └── wallet
 ```
 
-CA-Layers 바로 밑에는 **예제 시나리오들**이 위치하게 됩니다. 일례로 `account` 레이어에는 다음과 같은 예제 시나리오들이 위치해 있습니다.
+`CA-Layers` 바로 밑에는 **예제 시나리오들**이 위치하게 됩니다. 일례로 `account` 레이어에는 다음과 같은 예제 시나리오들이 위치해 있습니다.
 ```
 account
 ├── update_account_with_account_key_public
@@ -52,6 +53,9 @@ account
 ```
 * 각 시나리오들은 `build.gradle`, `settings.gradle`을 가지고 있습니다.
 * 이는 사용자 분들이 바로 시나리오 디렉토리에서 예제를 바로 실행해보실 수 있도록 구성하기 위함입니다.
+
+### 3.2 Summary
+정리해보면 이 프로젝트는 여러 개의 `CA-Layer/시나리오`로 되어 있으며 사용자들이 원하는 시나리오에서 `./gradlew run`으로 바로 예제코드를 실행해볼 수 있게 구성되어 있습니다.
 
 ## License
 **caver-java-examples** is released under the [MIT license](./LICENSE).
