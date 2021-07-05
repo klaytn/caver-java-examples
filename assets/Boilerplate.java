@@ -2,26 +2,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.account.Account;
-import com.klaytn.caver.account.WeightedMultiSigOptions;
-import com.klaytn.caver.methods.response.AccountKey;
-import com.klaytn.caver.methods.response.Bytes32;
-import com.klaytn.caver.methods.response.TransactionReceipt;
-import com.klaytn.caver.transaction.TxPropertyBuilder;
-import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
-import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
-import com.klaytn.caver.transaction.type.AccountUpdate;
-import com.klaytn.caver.transaction.type.ValueTransfer;
-import com.klaytn.caver.wallet.keyring.RoleBasedKeyring;
-import com.klaytn.caver.wallet.keyring.SingleKeyring;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
-import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Boilerplate code about "How to ..."
@@ -39,8 +22,12 @@ public class Boilerplate {
 
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -50,7 +37,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -63,20 +50,16 @@ public class Boilerplate {
         senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
-
-            Caver caver = new Caver(httpService);
-
-            System.out.println("Start writing BoilerPlate code for any scenario.");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
+            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
         }
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+
+        Caver caver = new Caver(httpService);
+
+        System.out.println("Start writing BoilerPlate code for any scenario.");
     }
 }

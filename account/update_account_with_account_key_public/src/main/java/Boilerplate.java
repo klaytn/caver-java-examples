@@ -20,8 +20,8 @@ import org.web3j.protocol.http.HttpService;
 import java.math.BigInteger;
 
 /**
- * BoilerPlate code about "How to Update Klaytn Account Keys with Caver #1 — AccountKeyPublic"
- * Related article - Korean: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
+ * Boilerplate code about "How to Update Klaytn Account Keys with Caver #1 — AccountKeyPublic"
+ * Related article - Korean: https://medium.com/klaytn/caver-caver%EB%A1%9C-klaytn-%EA%B3%84%EC%A0%95%EC%9D%98-%ED%82%A4%EB%A5%BC-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95-1-accountkeypublic-7f8a7197e2d4
  * Related article - English: https://medium.com/klaytn/caver-how-to-update-klaytn-account-keys-with-caver-1-accountkeypublic-30336b8f0b50
  */
 public class Boilerplate {
@@ -32,10 +32,15 @@ public class Boilerplate {
     private static String chainId = ""; // e.g. "1001" or "8217";
     private static String senderAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
     private static String senderPrivateKey = ""; // e.g. "0x39a6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc1"
+    private static String recipientAddress= ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -45,7 +50,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -56,70 +61,79 @@ public class Boilerplate {
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
         senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
         senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
+        recipientAddress = recipientAddress.equals("") ? env.get("RECIPIENT_ADDRESS") : recipientAddress;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
+    public static void run() throws Exception {
+        System.out.println("=====> Update AccountKey to AccountKeyPublic");
 
-            Caver caver = new Caver(httpService);
-
-            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-            caver.wallet.add(keyring);
-            String newKey = caver.wallet.keyring.generateSingleKey();
-            System.out.println("new private key: " + newKey);
-
-            SingleKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newKey);
-            Account account = newKeyring.toAccount();
-            AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
-                    TxPropertyBuilder.accountUpdate()
-                            .setFrom(keyring.getAddress())
-                            .setAccount(account)
-                            .setGas(BigInteger.valueOf(50000))
-            );
-
-            caver.wallet.sign(keyring.getAddress(), accountUpdate);
-
-            Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
-            if (sendResult.hasError()) {
-                throw new TransactionException(sendResult.getError().getMessage());
-            }
-            String txHash = sendResult.getResult();
-            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
-            TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
-
-            System.out.println("Account Update Transaction receipt => ");
-            System.out.println(objectToString(receiptData));
-
-            AccountKey accountKey = caver.rpc.klay.getAccountKey(keyring.getAddress()).send();
-
-            System.out.println("Result of account key update to AccountKeyPublic");
-            System.out.println("Account address: " + keyring.getAddress());
-            System.out.println("accountKey => ");
-            System.out.println(objectToString(accountKey));
-
-            caver.wallet.updateKeyring(newKeyring);
-            ValueTransfer vt = caver.transaction.valueTransfer.create(
-                    TxPropertyBuilder.valueTransfer()
-                            .setFrom(keyring.getAddress())
-                            .setTo(keyring.getAddress())
-                            .setValue(BigInteger.valueOf(1))
-                            .setGas(BigInteger.valueOf(25000))
-            );
-            caver.wallet.sign(keyring.getAddress(), vt);
-
-            Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
-            TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult());
-
-            System.out.println("After account update value transfer transaction receipt => ");
-            System.out.println(objectToString(vtReceiptData));
-        } catch (Exception e) {
-            e.printStackTrace();
+        HttpService httpService = new HttpService(nodeApiUrl);
+        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
+            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
         }
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+        Caver caver = new Caver(httpService);
+
+        // Add keyring to in-memory wallet
+        SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+        caver.wallet.add(keyring);
+
+        // Create new private key
+        String newKey = caver.wallet.keyring.generateSingleKey();
+        System.out.println("new private key: " + newKey);
+
+        // Create new Keyring as SingleKeyring instance with new private key
+        SingleKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newKey);
+        // Create an Account instance that includes the address and the public key
+        Account account = newKeyring.toAccount();
+        System.out.println(objectToString(account));
+
+        // Create account update transaction instance
+        AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
+                TxPropertyBuilder.accountUpdate()
+                        .setFrom(keyring.getAddress())
+                        .setAccount(account)
+                        .setGas(BigInteger.valueOf(50000))
+        );
+
+        // Sign the transaction
+        caver.wallet.sign(keyring.getAddress(), accountUpdate);
+        // Send transaction
+        Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
+        if(sendResult.hasError()) {
+            throw new TransactionException(sendResult.getError().getMessage());
+        }
+        String txHash = sendResult.getResult();
+        TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
+        TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
+        System.out.println("Account Update Transaction receipt => ");
+        System.out.println(objectToString(receiptData));
+
+        // Get accountKey from network
+        AccountKey accountKey = caver.rpc.klay.getAccountKey(keyring.getAddress()).send();
+        System.out.println("Result of account key update to AccountKeyPublic");
+        System.out.println("Account address: " + keyring.getAddress());
+        System.out.println("accountKey => ");
+        System.out.println(objectToString(accountKey));
+
+        // Update keyring with new private key in in-memory wallet
+        caver.wallet.updateKeyring(newKeyring);
+        // Send 1 Peb to recipient to test whether updated accountKey is well-working or not.
+        ValueTransfer vt = caver.transaction.valueTransfer.create(
+                TxPropertyBuilder.valueTransfer()
+                        .setFrom(keyring.getAddress())
+                        .setTo(recipientAddress)
+                        .setValue(BigInteger.valueOf(1))
+                        .setGas(BigInteger.valueOf(25000))
+        );
+
+        // Sign the transaction with updated keyring
+        caver.wallet.sign(keyring.getAddress(), vt);
+        // Send transaction
+        Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
+        TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult()); System.out.println("After account update value transfer transaction receipt => ");
+        System.out.println("Receipt of value transfer transaction after account update => ");
+        System.out.println(objectToString(vtReceiptData));
     }
 }
