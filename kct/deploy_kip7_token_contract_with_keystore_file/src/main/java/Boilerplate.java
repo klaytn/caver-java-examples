@@ -30,8 +30,12 @@ public class Boilerplate {
     private static String recipientAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -41,7 +45,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -53,60 +57,48 @@ public class Boilerplate {
         recipientAddress = recipientAddress.equals("") ? env.get("RECIPIENT_ADDRESS") : recipientAddress;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
-
-            Caver caver = new Caver(httpService);
-
-            // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create"
-            //    and place the file at `caver-java-examples/transaction/send_klay_with_keystore_file/resources`.
-            // 2. Get 5 KLAY at "https://baobab.wallet.klaytn.com/faucet".
-            File file = new File("resources/keystore.json");
-            if (file.exists() == false) {
-                // Handles when you run this Boilerplate as sub-module using IDE.
-                file = new File("transaction/send_klay_with_keystore_file/resources/keystore.json");
-                if (file.exists() == false) {
-                    throw new Exception("Cannot find keystore.json file.");
-                }
-            }
-            String password = "Password!@#4"; // Put your password here.
-            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-            KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
-            AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
-
-            caver.wallet.add(keyring);
-            KIP7DeployParams params = new KIP7DeployParams(
-                    "TestToken",
-                    "TTK",
-                    18,
-                    new BigInteger("1000000000000000000")
-            );
-            KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
-            System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
-
-            SendOptions opts = new SendOptions();
-            opts.setFrom(keyring.getAddress());
-            TransactionReceipt.TransactionReceiptData r = kip7.transfer(
-                    recipientAddress,
-                    BigInteger.ONE,
-                    opts
-            );
-            if (r.getTxError() == null) {
-                System.out.printf(
-                        "Succeed to send 1 TestToken from %s to %s.",
-                        keyring.getAddress(),
-                        recipientAddress
-                );
-                System.out.println(objectToString(r));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
+            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
         }
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+
+        Caver caver = new Caver(httpService);
+
+        // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create"
+        //    and place the file at `caver-java-examples/kct/deploy_kip7_token_contract_with_keystore_file/resources`.
+        // 2. Get 5 KLAY at "https://baobab.wallet.klaytn.com/faucet".
+        File file = new File("resources/keystore.json");
+        if(file.exists() == false) {
+            // Handles when you run this Boilerplate as sub-module using IDE.
+            file = new File("kct/deploy_kip7_token_contract_with_keystore_file/resources/keystore.json");
+            if(file.exists() == false) {
+                throw new Exception("Cannot find keystore.json file.");
+            }
+        }
+        String password = "Password!@#4"; // Put your password here.
+        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+        KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
+        AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
+        caver.wallet.add(keyring);
+
+        KIP7DeployParams params = new KIP7DeployParams(
+                "TestToken",
+                "TTK",
+                18,
+                new BigInteger("1000000000000000000")
+        );
+        KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
+        System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
+
+        SendOptions opts = new SendOptions();
+        opts.setFrom(keyring.getAddress());
+        TransactionReceipt.TransactionReceiptData r = kip7.transfer(
+                recipientAddress,
+                BigInteger.ONE,
+                opts
+        );
     }
 }

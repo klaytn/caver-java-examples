@@ -27,8 +27,12 @@ public class Boilerplate {
     private static String recipientAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -38,7 +42,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -52,45 +56,37 @@ public class Boilerplate {
         recipientAddress = recipientAddress.equals("") ? env.get("RECIPIENT_ADDRESS") : recipientAddress;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
-
-            Caver caver = new Caver(httpService);
-
-            SingleKeyring keyring = caver.wallet.keyring.create(deployerAddress, deployerPrivateKey);
-            caver.wallet.add(keyring);
-            KIP7DeployParams params = new KIP7DeployParams(
-                    "TestToken",
-                    "TTK",
-                    18,
-                    new BigInteger("1000000000000000000")
-            );
-            KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
-            System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
-
-            SendOptions opts = new SendOptions();
-            opts.setFrom(keyring.getAddress());
-            TransactionReceipt.TransactionReceiptData r = kip7.transfer(
-                    recipientAddress,
-                    BigInteger.ONE,
-                    opts
-            );
-            if (r.getTxError() == null) {
-                System.out.printf(
-                        "Succeed to send 1 TestToken from %s to %s.",
-                        keyring.getAddress(),
-                        recipientAddress
-                );
-                System.out.println(objectToString(r));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
+            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
         }
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+
+        Caver caver = new Caver(httpService);
+
+        SingleKeyring keyring = caver.wallet.keyring.create(deployerAddress, deployerPrivateKey);
+        caver.wallet.add(keyring);
+
+        KIP7DeployParams params = new KIP7DeployParams(
+                "TestToken",
+                "TTK",
+                18,
+                new BigInteger("1000000000000000000")
+        );
+        KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
+        System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
+
+        String name = kip7.name();
+        System.out.println("The name of the KIP-7 token contract: " + name);
+
+        SendOptions opts = new SendOptions();
+        opts.setFrom(keyring.getAddress());
+        TransactionReceipt.TransactionReceiptData r = kip7.transfer(
+                recipientAddress,
+                BigInteger.ONE,
+                opts
+        );
     }
 }
