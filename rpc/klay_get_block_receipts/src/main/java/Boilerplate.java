@@ -7,12 +7,10 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
 
-import java.io.IOException;
-
 /**
- * BoilerPlate code about "How to ..."
- * Related article - Korean:
- * Related article - English:
+ * BoilerPlate code about "How to get receipts included in a block."
+ * Related reference - Korean: https://ko.docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
+ * Related reference - English: https://docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
  */
 public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
@@ -22,8 +20,12 @@ public class Boilerplate {
     private static String chainId = ""; // e.g. "1001" or "8217";
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -33,7 +35,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -44,21 +46,19 @@ public class Boilerplate {
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+        Caver caver = new Caver(httpService);
 
-            Caver caver = new Caver(httpService);
+        // If there are no transactions in the block being looked up, the returned data will be empty.
+        String blockHashEmpty = "0x0f7f242e97dd0334c1c3d76b2f39846064b3766072fd4f2350c62d288477de21";
+        BlockTransactionReceipts blockTransactionReceipts = caver.rpc.klay.getBlockReceipts(blockHashEmpty).send();
+        System.out.println(objectToString(blockTransactionReceipts));
 
-            BlockTransactionReceipts blockTransactionReceipts = caver.rpc.klay.getBlockReceipts("0xeb5ce356d33b63c6489e7ac5120822dc82d419cdd197dc6bc0164e550ef74c8b").send();
-            System.out.println(objectToString(blockTransactionReceipts));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String blockHash = "0x28fdc2fdce29513105fdaa605384a75ee15623ccb2271febc5b73554f17ab09d";
+        blockTransactionReceipts = caver.rpc.klay.getBlockReceipts(blockHash).send();
+        System.out.println(objectToString(blockTransactionReceipts));
     }
 }
