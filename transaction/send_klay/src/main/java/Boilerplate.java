@@ -71,14 +71,12 @@ public class Boilerplate {
                 TxPropertyBuilder.valueTransfer()
                         .setFrom(senderAddress)
                         .setTo(recipientAddress)
-                        .setValue(
-                                new BigInteger(
-                                        caver.utils.convertToPeb(
-                                                BigDecimal.valueOf(1),
-                                                Utils.KlayUnit.KLAY
-                                        )
+                        .setValue(new BigInteger(
+                                caver.utils.convertToPeb(
+                                        BigDecimal.valueOf(1),
+                                        Utils.KlayUnit.KLAY
                                 )
-                        )
+                        ))
                         .setGas(BigInteger.valueOf(25000))
         );
         caver.wallet.sign(keyring.getAddress(), vt);

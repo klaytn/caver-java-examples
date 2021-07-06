@@ -2,31 +2,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.account.Account;
-import com.klaytn.caver.account.WeightedMultiSigOptions;
-import com.klaytn.caver.methods.response.AccountKey;
 import com.klaytn.caver.methods.response.Bytes32;
-import com.klaytn.caver.methods.response.TransactionReceipt;
 import com.klaytn.caver.transaction.TxPropertyBuilder;
-import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
-import com.klaytn.caver.transaction.response.TransactionReceiptProcessor;
-import com.klaytn.caver.transaction.type.AccountUpdate;
 import com.klaytn.caver.transaction.type.ValueTransfer;
-import com.klaytn.caver.wallet.keyring.*;
+import com.klaytn.caver.utils.Utils;
+import com.klaytn.caver.wallet.keyring.AbstractKeyring;
+import com.klaytn.caver.wallet.keyring.KeyStore;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.ObjectMapperFactory;
-import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 
-import javax.swing.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * BoilerPlate code about "How to send KLAY with keystore file."
@@ -94,7 +83,12 @@ public class Boilerplate {
                     TxPropertyBuilder.valueTransfer()
                         .setFrom(keyring.getAddress())
                         .setTo(recipientAddress)
-                        .setValue(BigInteger.ONE)
+                        .setValue(new BigInteger(
+                                caver.utils.convertToPeb(
+                                        BigDecimal.valueOf(1),
+                                        Utils.KlayUnit.KLAY
+                                )
+                        ))
                         .setGas(BigInteger.valueOf(25000))
             );
             caver.wallet.sign(keyring.getAddress(), vt);
