@@ -77,8 +77,9 @@ public class Boilerplate {
             ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
             AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
-
             caver.wallet.add(keyring);
+
+            // Send 1 KLAY.
             ValueTransfer vt = caver.transaction.valueTransfer.create(
                     TxPropertyBuilder.valueTransfer()
                         .setFrom(keyring.getAddress())
@@ -94,10 +95,6 @@ public class Boilerplate {
             caver.wallet.sign(keyring.getAddress(), vt);
             Bytes32 result = caver.rpc.klay.sendRawTransaction(vt).send();
             System.out.println(objectToString(result));
-
-            if (result.getError() == null) {
-                System.out.println("Succeed to send KLAY. Transaction hash: " + result.getResult());
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
