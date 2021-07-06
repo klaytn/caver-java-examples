@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
@@ -28,13 +30,22 @@ public class Boilerplate {
     private static String deployerPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String objectToString(Object value) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return ow.writeValueAsString(value);
     }
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -47,36 +58,36 @@ public class Boilerplate {
         deployerPrivateKey = deployerPrivateKey.equals("") ? env.get("DEPLOYER_PRIVATE_KEY") : deployerPrivateKey;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
-
-            Caver caver = new Caver(httpService);
-            // contractAbi is extracted by compiling caver-java-boilerplate/resources/KVstore.sol using solc:0.5.6
-            String contractAbi = "[{\"constant\":true,\"inputs\":[{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"set\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]";
-            String contractAddress = "0x1837f616100644973cf311b5bc9d109b7b427465";
-            SingleKeyring deployerKeyring = caver.wallet.keyring.create(
-                    deployerAddress,
-                    deployerPrivateKey
-            );
-
-            Contract contract = caver.contract.create(contractAbi, contractAddress);
-            SendOptions sendOptions = new SendOptions(deployerKeyring.getAddress(), BigInteger.valueOf(400000));
-
-            caver.wallet.add(deployerKeyring);
-            TransactionReceipt.TransactionReceiptData transactionReceiptData = contract.send(sendOptions, "set", "k1", "v1");
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            System.out.println(ow.writeValueAsString(transactionReceiptData));
-
-            List<Type> callResult = contract.call("get", "k1");
-            System.out.println(ow.writeValueAsString(callResult));
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
+            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
         }
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+        Caver caver = new Caver(httpService);
+
+        // abi is extracted by compiling caver-java-examples/resources/KVstore.sol using solc(solidity compiler)
+        String abi = "[{\"constant\":true,\"inputs\":[{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"set\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]";
+        String contractAddress = "0x44464bb3d41fb35fff4b99819b4d8601a93f5a59";
+        SingleKeyring deployerKeyring = caver.wallet.keyring.create(
+                deployerAddress,
+                deployerPrivateKey
+        );
+        caver.wallet.add(deployerKeyring);
+
+        Contract contract = caver.contract.create(abi, contractAddress);
+        SendOptions sendOptions = new SendOptions(deployerKeyring.getAddress(), BigInteger.valueOf(400000));
+        TransactionReceipt.TransactionReceiptData transactionReceiptData = contract.send(
+                sendOptions,
+                "set",
+                "k1",
+                "v1"
+        );
+        System.out.println(objectToString(transactionReceiptData));
+
+        List<Type> callResult = contract.call("get", "k1");
+        System.out.println("Result of calling get function with key:");
+        System.out.println(objectToString(callResult));
     }
 }
