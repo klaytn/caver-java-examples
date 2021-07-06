@@ -113,7 +113,6 @@ public class Boilerplate {
             SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
             caver.wallet.add(keyring);
 
-
             // Create ValueTransferMemo transaction
             // to submit a cid to Klaytn network
             ValueTransferMemo tx = caver.transaction.valueTransferMemo.create(
