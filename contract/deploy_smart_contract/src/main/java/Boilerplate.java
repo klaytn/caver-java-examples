@@ -18,7 +18,7 @@ import java.util.List;
  * BoilerPlate code about "How to deploy Smart Contract."
  */
 public class Boilerplate {
-    // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
+    // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
@@ -57,9 +57,6 @@ public class Boilerplate {
 
     public static void run() throws Exception {
         HttpService httpService = new HttpService(nodeApiUrl);
-        if(accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-            throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-        }
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
         Caver caver = new Caver(httpService);

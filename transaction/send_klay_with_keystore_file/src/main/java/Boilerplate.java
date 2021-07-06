@@ -68,9 +68,6 @@ public class Boilerplate {
     public static void run() {
         try {
             HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
             httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
             httpService.addHeader("x-chain-id", chainId);
 
