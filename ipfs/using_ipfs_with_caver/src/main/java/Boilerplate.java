@@ -22,6 +22,7 @@ import org.web3j.protocol.http.HttpService;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * Related article - English: https://medium.com/klaytn/using-ipfs-with-caver-964e1f721bfe
  */
 public class Boilerplate {
-    // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
+    // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env testFile.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
@@ -41,8 +42,12 @@ public class Boilerplate {
     private static String recipientAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -74,38 +79,40 @@ public class Boilerplate {
             }
             httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
             httpService.addHeader("x-chain-id", chainId);
-
             Caver caver = new Caver(httpService);
+            // Set connection with IPFS Node
             caver.ipfs.setIPFSNode("ipfs.infura.io", 5001, true);
-
             // `ipfs.txt` is located at `caver-java-examples/ipfs/using_ipfs_with_caver/resources`.
-            File file = new File("resources/ipfs.txt");
-            if (file.exists() == false) {
+            File testFile = new File("resources/ipfs.txt");
+            if (testFile.exists() == false) {
                 // Handles when you run this Boilerplate as sub-module using IDE.
-                file = new File("ipfs/using_ipfs_with_caver/resources/ipfs.txt");
-                if (file.exists() == false) {
-                    throw new Exception("Cannot find ipfs.txt file.");
+                testFile = new File("ipfs/using_ipfs_with_caver/resources/ipfs.txt");
+                if (testFile.exists() == false) {
+                    throw new Exception("Cannot find ipfs.txt testFile.");
                 }
             }
 
             // Add a file to IPFS with file path
-            System.out.println(file.getAbsolutePath());
-            String cid = caver.ipfs.add(file.getAbsolutePath());
+            String cid = caver.ipfs.add(testFile.getAbsolutePath());
             System.out.println("cid: " + cid);
 
-            // Add a file to IPFS with file contents
-            //String text = "IPFS test";
-            //byte[] data = text.getBytes();
-            //String cid = caver.ipfs.add(data);
+            // // Add a testFile to IPFS with testFile contents
+            // String text = "IPFS test";
+            // byte[] data = text.getBytes();
+            // String cid = caver.ipfs.add(data);
 
-            // Download a file from IPFS
+            // Download a testFile from IPFS
             byte[] contents = caver.ipfs.get(cid);
-            System.out.println("contents from IPFS: " + new String(contents, "UTF-8"));
-            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-            caver.wallet.add(keyring);
+            System.out.println("Contents downloaded from IPFS: " + new String(contents, StandardCharsets.UTF_8));
 
             // Convert from CID to multihash(hex formatted)
             String multihash = caver.ipfs.toHex(cid);
+            System.out.println("multihash: " + multihash);
+
+            // Add keyring to in-memory wallet
+            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+            caver.wallet.add(keyring);
+
 
             // Create ValueTransferMemo transaction
             // to submit a cid to Klaytn network
@@ -117,10 +124,10 @@ public class Boilerplate {
                         .setValue("0x0")
                         .setInput(multihash)
             );
-
             // Sign to the transaction
             caver.wallet.sign(keyring.getAddress(), tx);
 
+            // Send a signed transaction to Klaytn
             String txHash = caver.rpc.klay.sendRawTransaction(tx).send().getResult();
             TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
             TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
