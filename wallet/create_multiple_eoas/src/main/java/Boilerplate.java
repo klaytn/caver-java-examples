@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * BoilerPlate code about "How to create many EOAs easily."
+ * Boilerplate code about "How to create many EOAs easily."
  * Related reference - Korean: https://ko.docs.klaytn.com/klaytn/design/accounts#externally-owned-accounts-eoas
  * Related reference - English: https://docs.klaytn.com/klaytn/design/accounts#externally-owned-accounts-eoas
  */
@@ -23,8 +23,12 @@ public class Boilerplate {
     private static String chainId = ""; // e.g. "1001" or "8217";
 
     public static void main(String[] args) {
-        loadEnv();
-        run();
+        try {
+            loadEnv();
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String objectToString(Object value) throws JsonProcessingException {
@@ -34,7 +38,7 @@ public class Boilerplate {
 
     public static void loadEnv() {
         Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if (env.get("NODE_API_URL") == null) {
+        if(env.get("NODE_API_URL") == null) {
             // This handle the situation when user tries to run BoilerPlate code from project root directory
             env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
         }
@@ -45,26 +49,18 @@ public class Boilerplate {
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
     }
 
-    public static void run() {
-        try {
-            HttpService httpService = new HttpService(nodeApiUrl);
-            if (accessKeyId.isEmpty() || secretAccessKey.isEmpty()) {
-                throw new Exception("accessKeyId and secretAccessKey must not be empty.");
-            }
-            httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
-            httpService.addHeader("x-chain-id", chainId);
+    public static void run() throws Exception {
+        HttpService httpService = new HttpService(nodeApiUrl);
+        httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
+        httpService.addHeader("x-chain-id", chainId);
+        Caver caver = new Caver(httpService);
 
-            Caver caver = new Caver(httpService);
-
-            int numEOAs = 10;
-            List<SingleKeyring> eoas = new ArrayList<>();
-            for (int i = 0; i < numEOAs; i++) {
-                eoas.add(caver.wallet.keyring.generate());
-            }
-            System.out.println("Succeed to create " + numEOAs + " EOAs using SingleKey.");
-            System.out.println(objectToString(eoas));
-        } catch (Exception e) {
-            e.printStackTrace();
+        int numEOAs = 10;
+        List<SingleKeyring> eoas = new ArrayList<>();
+        for(int i = 0; i < numEOAs; i++) {
+            eoas.add(caver.wallet.keyring.generate());
         }
+        System.out.println("Succeed to create " + numEOAs + " EOAs using SingleKey.");
+        System.out.println(objectToString(eoas));
     }
 }
