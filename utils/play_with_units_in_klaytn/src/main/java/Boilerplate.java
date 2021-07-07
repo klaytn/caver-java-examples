@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * BoilerPlate code about "How to use Klay Units."
+ * Boilerplate code about "How to use Klay Units."
  * Related article - Korean: https://ko.docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
  * Related reference - English: https://docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
  */
@@ -62,8 +62,8 @@ public class Boilerplate {
         HttpService httpService = new HttpService(nodeApiUrl);
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
-
         Caver caver = new Caver(httpService);
+
         SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
         caver.wallet.add(keyring);
 
