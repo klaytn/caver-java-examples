@@ -17,7 +17,7 @@ import java.io.File;
 import java.math.BigInteger;
 
 /**
- * BoilerPlate code about "How to deploy my own KIP7 token with keystore file."
+ * Boilerplate code about "How to deploy my own KIP7 token with keystore file."
  * Related article - Korean: https://medium.com/klaytn/common-architecture-of-caver-f7a7a1c554de
  * Related article - English: https://medium.com/klaytn/common-architecture-of-caver-a714224a0047
  */
@@ -61,7 +61,6 @@ public class Boilerplate {
         HttpService httpService = new HttpService(nodeApiUrl);
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
-
         Caver caver = new Caver(httpService);
 
         // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create"
@@ -78,8 +77,8 @@ public class Boilerplate {
         String password = "Password!@#4"; // Put your password here.
         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
         KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
-        AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
-        caver.wallet.add(keyring);
+        AbstractKeyring deployerKeyring = caver.wallet.keyring.decrypt(keyStore, password);
+        caver.wallet.add(deployerKeyring);
 
         KIP7DeployParams params = new KIP7DeployParams(
                 "TestToken",
@@ -87,11 +86,11 @@ public class Boilerplate {
                 18,
                 new BigInteger("1000000000000000000")
         );
-        KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
+        KIP7 kip7 = caver.kct.kip7.deploy(params, deployerKeyring.getAddress());
         System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
 
         SendOptions opts = new SendOptions();
-        opts.setFrom(keyring.getAddress());
+        opts.setFrom(deployerKeyring.getAddress());
         TransactionReceipt.TransactionReceiptData r = kip7.transfer(
                 recipientAddress,
                 BigInteger.ONE,

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Boilerplate code about "Using IPFS with Caver"
+ * Boilerplate code about "Using IPFS with Caver."
  * Related article - Korean: https://medium.com/klaytn/caver%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-ipfs-%EC%82%AC%EC%9A%A9%EB%B2%95-4889a3b29c0b
  * Related article - English: https://medium.com/klaytn/using-ipfs-with-caver-964e1f721bfe
  */
@@ -110,21 +110,21 @@ public class Boilerplate {
             System.out.println("multihash: " + multihash);
 
             // Add keyring to in-memory wallet
-            SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-            caver.wallet.add(keyring);
+            SingleKeyring senderKeyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+            caver.wallet.add(senderKeyring);
 
             // Create ValueTransferMemo transaction
             // to submit a cid to Klaytn network
             ValueTransferMemo tx = caver.transaction.valueTransferMemo.create(
                     TxPropertyBuilder.valueTransferMemo()
-                        .setFrom(keyring.getAddress())
+                        .setFrom(senderKeyring.getAddress())
                         .setTo(recipientAddress)
                         .setGas(BigInteger.valueOf(25000))
                         .setValue("0x0")
                         .setInput(multihash)
             );
             // Sign to the transaction
-            caver.wallet.sign(keyring.getAddress(), tx);
+            caver.wallet.sign(senderKeyring.getAddress(), tx);
 
             // Send a signed transaction to Klaytn
             String txHash = caver.rpc.klay.sendRawTransaction(tx).send().getResult();

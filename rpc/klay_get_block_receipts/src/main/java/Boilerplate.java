@@ -8,7 +8,7 @@ import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
 
 /**
- * BoilerPlate code about "How to get receipts included in a block."
+ * Boilerplate code about "How to get receipts included in a block."
  * Related reference - Korean: https://ko.docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
  * Related reference - English: https://docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
  */

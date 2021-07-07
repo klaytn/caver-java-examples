@@ -18,7 +18,9 @@ import java.math.BigInteger;
 import java.util.List;
 
 /**
- * BoilerPlate code about "How to execute Smart Contract."
+ * Boilerplate code about "How to execute Smart Contract."
+ * Related reference - Korean: https://ko.docs.klaytn.com/bapp/sdk/caver-java/getting-started#smart-contract
+ * Related reference - English: https://docs.klaytn.com/bapp/sdk/caver-java/getting-started#smart-contract
  */
 public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.

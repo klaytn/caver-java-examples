@@ -64,14 +64,14 @@ public class Boilerplate {
         httpService.addHeader("x-chain-id", chainId);
         Caver caver = new Caver(httpService);
 
-        SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-        caver.wallet.add(keyring);
+        SingleKeyring senderKeyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+        caver.wallet.add(senderKeyring);
 
         // Because a field "value" always interprets its value as a unit "peb",
         // you must take care what is the actual value when you sending some KLAY.
         ValueTransfer vt = caver.transaction.valueTransfer.create(
                 TxPropertyBuilder.valueTransfer()
-                        .setFrom(keyring.getAddress())
+                        .setFrom(senderKeyring.getAddress())
                         .setTo(recipientAddress)
                         .setGas(BigInteger.valueOf(25000))
                         .setValue(BigInteger.ONE)

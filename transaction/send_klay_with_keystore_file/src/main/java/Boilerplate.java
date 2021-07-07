@@ -62,7 +62,6 @@ public class Boilerplate {
         HttpService httpService = new HttpService(nodeApiUrl);
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
-
         Caver caver = new Caver(httpService);
 
         // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create"
@@ -79,13 +78,13 @@ public class Boilerplate {
         String password = "Password!@#4"; // Put your password here.
         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
         KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
-        AbstractKeyring keyring = caver.wallet.keyring.decrypt(keyStore, password);
-        caver.wallet.add(keyring);
+        AbstractKeyring senderKeyring = caver.wallet.keyring.decrypt(keyStore, password);
+        caver.wallet.add(senderKeyring);
 
         // Send 1 KLAY.
         ValueTransfer vt = caver.transaction.valueTransfer.create(
                 TxPropertyBuilder.valueTransfer()
-                        .setFrom(keyring.getAddress())
+                        .setFrom(senderKeyring.getAddress())
                         .setTo(recipientAddress)
                         .setValue(new BigInteger(
                                 caver.utils.convertToPeb(
@@ -95,7 +94,7 @@ public class Boilerplate {
                         ))
                         .setGas(BigInteger.valueOf(25000))
         );
-        caver.wallet.sign(keyring.getAddress(), vt);
+        caver.wallet.sign(senderKeyring.getAddress(), vt);
         Bytes32 result = caver.rpc.klay.sendRawTransaction(vt).send();
         System.out.println(objectToString(result));
     }

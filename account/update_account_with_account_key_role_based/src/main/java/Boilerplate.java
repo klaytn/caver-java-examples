@@ -77,14 +77,14 @@ public class Boilerplate {
         Caver caver = new Caver(httpService);
 
         // Add keyring to in-memory wallet
-        SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-        caver.wallet.add(keyring);
+        SingleKeyring senderKeyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+        caver.wallet.add(senderKeyring);
 
         List<String[]> newRoleBasedKeys = caver.wallet.keyring.generateRolBasedKeys(new int[]{2, 1, 3});
         System.out.println("new private keys by role: " + objectToString(newRoleBasedKeys));
 
         // Create new Keyring instance as RoleBasedKeyring with new private keys by role
-        RoleBasedKeyring newKeyring = caver.wallet.keyring.create(keyring.getAddress(), newRoleBasedKeys);
+        RoleBasedKeyring newKeyring = caver.wallet.keyring.create(senderKeyring.getAddress(), newRoleBasedKeys);
         BigInteger[][] optionWeight = {
                 {BigInteger.ONE, BigInteger.ONE},
                 {},
@@ -101,13 +101,13 @@ public class Boilerplate {
         // Create account update transaction instance
         AccountUpdate accountUpdate = caver.transaction.accountUpdate.create(
                 TxPropertyBuilder.accountUpdate()
-                        .setFrom(keyring.getAddress())
+                        .setFrom(senderKeyring.getAddress())
                         .setAccount(account)
                         .setGas(BigInteger.valueOf(150000))
         );
 
         // Sign the transaction
-        caver.wallet.sign(keyring.getAddress(), accountUpdate);
+        caver.wallet.sign(senderKeyring.getAddress(), accountUpdate);
         // Send transaction
         Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(accountUpdate).send();
         if(sendResult.hasError()) {
@@ -120,9 +120,9 @@ public class Boilerplate {
         System.out.println(objectToString(receiptData));
 
         // Get accountKey from network
-        AccountKey accountKey = caver.rpc.klay.getAccountKey(keyring.getAddress()).send();
+        AccountKey accountKey = caver.rpc.klay.getAccountKey(senderKeyring.getAddress()).send();
         System.out.println("Result of account key update to AccountKeyRoleBased");
-        System.out.println("Account address: " + keyring.getAddress());
+        System.out.println("Account address: " + senderKeyring.getAddress());
         System.out.println("accountKey => ");
         System.out.println(objectToString(accountKey));
 
@@ -131,7 +131,7 @@ public class Boilerplate {
         // Send 1 Peb to recipient to test whether updated accountKey is well-working or not.
         ValueTransfer vt = caver.transaction.valueTransfer.create(
                 TxPropertyBuilder.valueTransfer()
-                        .setFrom(keyring.getAddress())
+                        .setFrom(senderKeyring.getAddress())
                         .setTo(recipientAddress)
                         .setValue(BigInteger.valueOf(1))
                         .setGas(BigInteger.valueOf(150000))
@@ -139,7 +139,7 @@ public class Boilerplate {
 
         // Sign the transaction with updated keyring
         // This sign function will sign the transaction with all private keys in RoleTrasnsactionKey in the keyring
-        caver.wallet.sign(keyring.getAddress(), vt);
+        caver.wallet.sign(senderKeyring.getAddress(), vt);
         // Send transaction
         Bytes32 vtResult = caver.rpc.klay.sendRawTransaction(vt).send();
         TransactionReceipt.TransactionReceiptData vtReceiptData = receiptProcessor.waitForTransactionReceipt(vtResult.getResult());

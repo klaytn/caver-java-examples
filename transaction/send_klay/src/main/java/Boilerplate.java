@@ -16,6 +16,8 @@ import java.math.BigInteger;
 
 /**
  * BoilerPlate code about "How to send Klay."
+ * Related reference - Korean: https://ko.docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-klay-at-a-glance
+ * Related reference - English: https://docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-klay-at-a-glance
  */
 public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.
@@ -63,8 +65,8 @@ public class Boilerplate {
         httpService.addHeader("x-chain-id", chainId);
         Caver caver = new Caver(httpService);
 
-        SingleKeyring keyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
-        caver.wallet.add(keyring);
+        SingleKeyring senderKeyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
+        caver.wallet.add(senderKeyring);
 
         // Send 1 KLAY.
         ValueTransfer vt = caver.transaction.valueTransfer.create(
@@ -79,7 +81,7 @@ public class Boilerplate {
                         ))
                         .setGas(BigInteger.valueOf(25000))
         );
-        caver.wallet.sign(keyring.getAddress(), vt);
+        caver.wallet.sign(senderKeyring.getAddress(), vt);
         Bytes32 result = caver.rpc.klay.sendRawTransaction(vt).send();
         System.out.println(objectToString(result));
     }

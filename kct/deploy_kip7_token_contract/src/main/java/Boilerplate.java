@@ -15,6 +15,7 @@ import java.math.BigInteger;
 
 /**
  * Boilerplate code about "How to deploy my own KIP7 token."
+ * Related reference: https://javadoc.io/doc/com.klaytn.caver/core/latest/com/klaytn/caver/kct/kip7/KIP7.html
  */
 public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
@@ -60,11 +61,10 @@ public class Boilerplate {
         HttpService httpService = new HttpService(nodeApiUrl);
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
-
         Caver caver = new Caver(httpService);
 
-        SingleKeyring keyring = caver.wallet.keyring.create(deployerAddress, deployerPrivateKey);
-        caver.wallet.add(keyring);
+        SingleKeyring deployerKeyring = caver.wallet.keyring.create(deployerAddress, deployerPrivateKey);
+        caver.wallet.add(deployerKeyring);
 
         KIP7DeployParams params = new KIP7DeployParams(
                 "TestToken",
@@ -72,14 +72,14 @@ public class Boilerplate {
                 18,
                 new BigInteger("1000000000000000000")
         );
-        KIP7 kip7 = caver.kct.kip7.deploy(params, keyring.getAddress());
+        KIP7 kip7 = caver.kct.kip7.deploy(params, deployerKeyring.getAddress());
         System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
 
         String name = kip7.name();
         System.out.println("The name of the KIP-7 token contract: " + name);
 
         SendOptions opts = new SendOptions();
-        opts.setFrom(keyring.getAddress());
+        opts.setFrom(deployerKeyring.getAddress());
         TransactionReceipt.TransactionReceiptData r = kip7.transfer(
                 recipientAddress,
                 BigInteger.ONE,
