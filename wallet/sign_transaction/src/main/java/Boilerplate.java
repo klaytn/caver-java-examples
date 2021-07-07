@@ -26,9 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * BoilerPlate code about "How to sign transaction using Wallet"
- * Related article - Korean:
- * Related article - English:
+ * Boilerplate code about "How to sign transaction using Wallet"
+ * Related reference - Korean: https://docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-a-value-transfer-transaction
+ * Related reference - English: https://ko.docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-a-value-transfer-transaction
  */
 public class Boilerplate {
     // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.

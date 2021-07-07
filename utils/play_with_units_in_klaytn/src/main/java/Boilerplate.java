@@ -15,7 +15,7 @@ import java.math.BigInteger;
 
 /**
  * Boilerplate code about "How to use Klay Units."
- * Related article - Korean: https://ko.docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
+ * Related reference - Korean: https://ko.docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
  * Related reference - English: https://docs.klaytn.com/klaytn/design/klaytn-native-coin-klay#units-of-klay
  */
 public class Boilerplate {
