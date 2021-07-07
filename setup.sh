@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+## How to use this shell script
+# caver-java-examples$ ./setup.sh <common-architecture-layer>/<scenario>
+# e.g. $ ./setup.sh account/update_account_with_account_key_weighted_multisig
+##
+
 PROJECT_ROOT_DIR=$PWD
 ASSETS_DIR=$PROJECT_ROOT_DIR/assets
 BUILD_GRADLE="build.gradle"
@@ -9,11 +14,13 @@ NEW_SCENARIO=$1
 NEW_SCENARIO_SRC_ROOT=$NEW_SCENARIO/src/main/java
 
 ## Tokenize $NEW_SCENARIO
-# account/update_account_with_account_key_weighted_multisig | COMMON_ARCHITECTURE_LAYER: account,
+# input: account/update_account_with_account_key_weighted_multisig
+# then => COMMON_ARCHITECTURE_LAYER: account, SCENARIO_NAME: update_account_with_account_key_weighted_multisig
 ARR_IN=(${NEW_SCENARIO//\// })
 ARR_LEN=${#ARR_IN[@]}
 COMMON_ARCHITECTURE_LAYER_NAME=${ARR_IN[0]}
 SCENARIO_NAME=${ARR_IN[$ARR_LEN - 1]}
+##
 
 echo "Create project structure for $NEW_SCENARIO\n"
 
