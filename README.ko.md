@@ -51,11 +51,11 @@ account
 ├── update_account_with_account_key_role_based
 └── update_account_with_account_key_weighted_multisig
 ```
-* 각 시나리오들은 `build.gradle`, `settings.gradle`을 가지고 있습니다.
+* 각 시나리오들은 개별 Gradle 프로젝트들로 각각 자신만의 `build.gradle`, `settings.gradle`을 가지고 있습니다. 그리고 해당 시나리오에 특정 파일이 필요한 경우 `resources` 디렉토리를 가지고 있습니다.
 * 이는 사용자 분들이 바로 시나리오 디렉토리에서 예제를 바로 실행해보실 수 있도록 구성하기 위함입니다.
 
 ### 3.2 Summary
-정리해보면 이 프로젝트는 여러 개의 `CA-Layer/시나리오`로 되어 있으며 사용자들이 원하는 시나리오에서 `./gradlew run`으로 바로 예제코드를 실행해볼 수 있게 구성되어 있습니다.
+정리해보면 이 프로젝트는 여러 개의 `CA-Layer/시나리오`로 되어 있으며 사용자들이 원하는 시나리오 디렉토리에서 `./gradlew run`으로 바로 예제코드를 실행해볼 수 있게 구성되어 있습니다.
 
 ## License
 **caver-java-examples** is released under the [MIT license](./LICENSE).
