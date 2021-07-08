@@ -42,15 +42,12 @@ public class Boilerplate {
         Path workingDirectoryPath = Paths.get(workingDirectory);
         String projectRootDirectory = "caver-java-examples";
         String currentDirectoryName = workingDirectoryPath.getName(workingDirectoryPath.getNameCount() - 1).toString();
+        String envDirectory = currentDirectoryName.equals(projectRootDirectory) ?
+                workingDirectoryPath.toString() :
+                workingDirectoryPath.getParent().getParent().toString();
 
         // Read `/path/to/caver-java-examples/.env` file.
-        if(currentDirectoryName.equals(projectRootDirectory)) {
-            env = Dotenv.configure().load();
-        } else {
-            // When user run this code in the scenario directory,
-            // try to read .env from parent of parent of current directory which is caver-java-examples.
-            env = Dotenv.configure().directory("../../").load();
-        }
+        env = Dotenv.configure().directory(envDirectory).load();
 
         nodeApiUrl = nodeApiUrl.equals("") ? env.get("NODE_API_URL") : nodeApiUrl;
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
