@@ -7,13 +7,16 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Boilerplate code about "How to get receipts included in a block."
  * Related reference - Korean: https://ko.docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
  * Related reference - English: https://docs.klaytn.com/bapp/json-rpc/api-references/klay/block#klay_getblockreceipts
  */
 public class Boilerplate {
-    // You can directly input values for the variables below, or you can enter values in the caver-java-boilerplate/.env file.
+    // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
@@ -34,10 +37,19 @@ public class Boilerplate {
     }
 
     public static void loadEnv() {
-        Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if(env.get("NODE_API_URL") == null) {
-            // This handle the situation when user tries to run BoilerPlate code from project root directory
-            env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
+        Dotenv env;
+        String workingDirectory = System.getProperty("user.dir");
+        Path workingDirectoryPath = Paths.get(workingDirectory);
+        String projectRootDirectory = "caver-java-examples";
+        String currentDirectoryName = workingDirectoryPath.getName(workingDirectoryPath.getNameCount() - 1).toString();
+
+        // Read `/path/to/caver-java-examples/.env` file.
+        if(currentDirectoryName.equals(projectRootDirectory)) {
+            env = Dotenv.configure().load();
+        } else {
+            // When user run this code in the scenario directory,
+            // try to read .env from parent of parent of current directory which is caver-java-examples.
+            env = Dotenv.configure().directory("../../").load();
         }
 
         nodeApiUrl = nodeApiUrl.equals("") ? env.get("NODE_API_URL") : nodeApiUrl;

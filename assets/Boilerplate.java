@@ -6,6 +6,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Boilerplate code about "How to ..."
  * Related article - Korean:
@@ -36,10 +39,19 @@ public class Boilerplate {
     }
 
     public static void loadEnv() {
-        Dotenv env = Dotenv.configure().directory("../../").ignoreIfMalformed().ignoreIfMissing().load();
-        if(env.get("NODE_API_URL") == null) {
-            // This handle the situation when user tries to run BoilerPlate code from project root directory
-            env = Dotenv.configure().directory(System.getProperty("user.dir")).ignoreIfMalformed().ignoreIfMissing().load();
+        Dotenv env;
+        String workingDirectory = System.getProperty("user.dir");
+        Path workingDirectoryPath = Paths.get(workingDirectory);
+        String projectRootDirectory = "caver-java-examples";
+        String currentDirectoryName = workingDirectoryPath.getName(workingDirectoryPath.getNameCount() - 1).toString();
+
+        // Read `/path/to/caver-java-examples/.env` file.
+        if(currentDirectoryName.equals(projectRootDirectory)) {
+            env = Dotenv.configure().load();
+        } else {
+            // When user run this code in the scenario directory,
+            // try to read .env from parent of parent directory which is caver-java-examples.
+            env = Dotenv.configure().directory("../../").load();
         }
 
         nodeApiUrl = nodeApiUrl.equals("") ? env.get("NODE_API_URL") : nodeApiUrl;
