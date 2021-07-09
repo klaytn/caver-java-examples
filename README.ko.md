@@ -28,8 +28,8 @@ KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입하셔야
     * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용을 채워주도록 합니다. 이 파일에 채우신 값들은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/Boilerplate.java` 파일의 `loadEnv` 메서드에 `.env` 파일에 정의된 변수들을 읽어들이는 코드가 있으니 참고해주세요.
     * 옵션 2: 원하는 시나리오에 해당하는 `Boilerplate.java` 파일을 열고 Boilerplate class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
 3. 사용하시는 터미널에서 원하는 시나리오로 디렉토리를 이동하신 뒤 `./gradlew run`을 실행합니다.
-    * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew clean run`
-    * 예시 2: `$ cd contract/fee_delegation && ./gradlew clean run`
+    * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
+    * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`
 
 ## 3. 프로젝트 구조
 > caver-java-examples 프로젝트의 구조에 대한 이해를 돕기 위해 작성한 세션입니다.
