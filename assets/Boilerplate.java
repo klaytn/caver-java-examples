@@ -63,7 +63,6 @@ public class Boilerplate {
         HttpService httpService = new HttpService(nodeApiUrl);
         httpService.addHeader("Authorization", Credentials.basic(accessKeyId, secretAccessKey));
         httpService.addHeader("x-chain-id", chainId);
-
         Caver caver = new Caver(httpService);
 
         System.out.println("Start writing Boilerplate code for any scenario.");
