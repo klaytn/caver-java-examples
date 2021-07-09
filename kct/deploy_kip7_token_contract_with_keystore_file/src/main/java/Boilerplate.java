@@ -72,9 +72,10 @@ public class Boilerplate {
         httpService.addHeader("x-chain-id", chainId);
         Caver caver = new Caver(httpService);
 
-        // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create"
-        //    and place the file at `caver-java-examples/kct/deploy_kip7_token_contract_with_keystore_file/resources`.
-        // 2. Get 5 KLAY at "https://baobab.wallet.klaytn.com/faucet".
+        // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create".
+        // 2. Rename that keystore file name with `keystore.json` or change the filename in line 79.
+        // 3. Place that keystore file at `caver-java-examples/kct/deploy_kip7_token_contract_with_keystore_file/resources`.
+        // 4. Get 5 KLAY at "https://baobab.wallet.klaytn.com/faucet".
         File file = new File("resources/keystore.json");
         if(file.exists() == false) {
             // Handles when you run this Boilerplate as sub-module using IDE.
@@ -83,7 +84,7 @@ public class Boilerplate {
                 throw new Exception("Cannot find keystore.json file.");
             }
         }
-        String password = "Password!@#4"; // Put your password here.
+        String password = ""; // Put your password here.
         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
         KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
         AbstractKeyring deployerKeyring = caver.wallet.keyring.decrypt(keyStore, password);
