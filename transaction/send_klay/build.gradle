@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group 'com.klaytn'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+apply plugin: 'java'
+
+java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+dependencies {
+    implementation 'com.klaytn.caver:core:1.6.2'
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0'
+    implementation "ch.qos.logback:logback-core:1.2.3",
+            "ch.qos.logback:logback-classic:1.2.3"
+}
+
+task run(type: JavaExec) {
+    group = "Boilerplate"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set("Boilerplate")
+}
