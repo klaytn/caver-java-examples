@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
 import com.klaytn.caver.abi.datatypes.Type;
 import com.klaytn.caver.contract.Contract;
-import com.klaytn.caver.contract.ContractDeployParams;
 import com.klaytn.caver.contract.SendOptions;
 import com.klaytn.caver.methods.response.TransactionReceipt;
 import com.klaytn.caver.wallet.keyring.SingleKeyring;
@@ -135,10 +134,7 @@ public class Boilerplate {
 
         SingleKeyring deployerKeyring = caver.wallet.keyring.create(deployerAddress, deployerPrivateKey);
         caver.wallet.add(deployerKeyring);
-        String keyString = "keyString";
-        String valueString = "valueString";
 
-        ContractDeployParams contractDeployParams = new ContractDeployParams(byteCode, keyString, valueString);
         SendOptions sendOptions = new SendOptions(deployerKeyring.getAddress(), BigInteger.valueOf(650000));
         Contract deployedContract = contract.deploy(sendOptions, byteCode, "Just", "Test");
         System.out.println("Deployed address of contract: " + deployedContract.getContractAddress());
