@@ -13,6 +13,7 @@ import okhttp3.Credentials;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -83,7 +84,7 @@ public class Boilerplate {
             // Handles when you run this Boilerplate as sub-module using IDE.
             testFile = new File("ipfs/using_ipfs_with_caver/resources/ipfs.txt");
             if (testFile.exists() == false) {
-                throw new Exception("Cannot find ipfs.txt testFile.");
+                throw new FileNotFoundException("Cannot find ipfs.txt testFile.");
             }
         }
 
