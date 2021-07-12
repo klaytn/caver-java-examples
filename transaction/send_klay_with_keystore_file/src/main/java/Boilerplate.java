@@ -2,7 +2,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.methods.response.Bytes32;
 import com.klaytn.caver.methods.response.TransactionReceipt;
 import com.klaytn.caver.transaction.TxPropertyBuilder;
 import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
@@ -16,6 +15,7 @@ import org.web3j.protocol.ObjectMapperFactory;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -83,7 +83,7 @@ public class Boilerplate {
             // Handles when you run this Boilerplate as sub-module using IDE.
             file = new File("transaction/send_klay_with_keystore_file/resources/keystore.json");
             if(file.exists() == false) {
-                throw new Exception("Cannot find keystore.json file.");
+                throw new FileNotFoundException("Cannot find keystore.json file.");
             }
         }
         String password = ""; // Put your password here.
