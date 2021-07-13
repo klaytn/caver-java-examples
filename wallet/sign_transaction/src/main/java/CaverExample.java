@@ -2,35 +2,33 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
-import com.klaytn.caver.contract.SendOptions;
-import com.klaytn.caver.kct.kip7.KIP7;
-import com.klaytn.caver.kct.kip7.KIP7DeployParams;
-import com.klaytn.caver.methods.response.TransactionReceipt;
-import com.klaytn.caver.wallet.keyring.AbstractKeyring;
-import com.klaytn.caver.wallet.keyring.KeyStore;
+import com.klaytn.caver.transaction.TxPropertyBuilder;
+import com.klaytn.caver.transaction.type.ValueTransfer;
+import com.klaytn.caver.utils.Utils;
+import com.klaytn.caver.wallet.keyring.SingleKeyring;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Credentials;
-import org.web3j.protocol.ObjectMapperFactory;
 import org.web3j.protocol.http.HttpService;
 
-import java.io.File;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Boilerplate code about "How to deploy my own KIP7 token with keystore file."
- * Related article - Korean: https://medium.com/klaytn/common-architecture-of-caver-f7a7a1c554de
- * Related article - English: https://medium.com/klaytn/common-architecture-of-caver-a714224a0047
+ * Example code about "How to sign transaction using Wallet"
+ * Related reference - Korean: https://ko.docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-a-value-transfer-transaction
+ * Related reference - English: https://docs.klaytn.com/bapp/sdk/caver-java/getting-started#sending-a-value-transfer-transaction
  */
-public class Boilerplate {
+public class CaverExample {
     // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
     private static String secretAccessKey = ""; // e.g. "aP/reVYHXqjw3EtQrMuJP4A3/hOb69TjnBT3ePKG";
     private static String chainId = ""; // e.g. "1001" or "8217";
+    private static String senderAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
+    private static String senderPrivateKey = ""; // e.g. "0x42f6375b608c2572fadb2ed9fd78c5c456ca3aa860c43192ad910c3269727fc7"
     private static String recipientAddress = ""; // e.g. "0xeb709d59954f4cdc6b6f3bfcd8d531887b7bd199"
-
 
     public static void main(String[] args) {
         try {
@@ -63,6 +61,8 @@ public class Boilerplate {
         accessKeyId = accessKeyId.equals("") ? env.get("ACCESS_KEY_ID") : accessKeyId;
         secretAccessKey = secretAccessKey.equals("") ? env.get("SECRET_ACCESS_KEY") : secretAccessKey;
         chainId = chainId.equals("") ? env.get("CHAIN_ID") : chainId;
+        senderAddress = senderAddress.equals("") ? env.get("SENDER_ADDRESS") : senderAddress;
+        senderPrivateKey = senderPrivateKey.equals("") ? env.get("SENDER_PRIVATE_KEY") : senderPrivateKey;
         recipientAddress = recipientAddress.equals("") ? env.get("RECIPIENT_ADDRESS") : recipientAddress;
     }
 
@@ -72,43 +72,25 @@ public class Boilerplate {
         httpService.addHeader("x-chain-id", chainId);
         Caver caver = new Caver(httpService);
 
-        // 1. Create your own keystore file at "https://baobab.wallet.klaytn.com/create".
-        // 2. Rename that keystore file name with `keystore.json` or change the filename in line 79 and 82.
-        // 3. Place that keystore file at `caver-java-examples/kct/deploy_kip7_token_contract_with_keystore_file/resources`.
-        // 4. Get 5 KLAY at "https://baobab.wallet.klaytn.com/faucet".
-        File file = new File("resources/keystore.json");
-        if(file.exists() == false) {
-            // Handles when you run this Boilerplate as sub-module using IDE.
-            file = new File("kct/deploy_kip7_token_contract_with_keystore_file/resources/keystore.json");
-            if(file.exists() == false) {
-                throw new Exception("Cannot find keystore.json file.");
-            }
-        }
-        String password = ""; // Put your password here.
-        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-        KeyStore keyStore = objectMapper.readValue(file, KeyStore.class);
-        AbstractKeyring deployerKeyring = caver.wallet.keyring.decrypt(keyStore, password);
-        caver.wallet.add(deployerKeyring);
+        SingleKeyring senderKeyring = caver.wallet.keyring.create(senderAddress, senderPrivateKey);
 
-        KIP7DeployParams params = new KIP7DeployParams(
-                "TestToken",
-                "TTK",
-                18,
-                new BigInteger("1000000000000000000")
+        // Create ValueTransfer transaction sending 1 KLAY to recipientAddress
+        ValueTransfer vt = caver.transaction.valueTransfer.create(
+                TxPropertyBuilder.valueTransfer()
+                        .setFrom(senderKeyring.getAddress())
+                        .setTo(recipientAddress)
+                        .setValue(caver.utils.convertToPeb(BigDecimal.valueOf(1), Utils.KlayUnit.KLAY))
+                        .setGas(BigInteger.valueOf(25000))
         );
-        KIP7 kip7 = caver.kct.kip7.deploy(params, deployerKeyring.getAddress());
-        System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
+        System.out.println("Before sign the transaction using wallet, there is no signatures.");
+        System.out.println(objectToString(vt.getSignatures())); // Empty siganture
 
-        String name = kip7.name();
-        System.out.println("The name of the KIP-7 token contract: " + name);
-
-        SendOptions opts = new SendOptions();
-        opts.setFrom(deployerKeyring.getAddress());
-        TransactionReceipt.TransactionReceiptData receiptData = kip7.transfer(
-                recipientAddress,
-                BigInteger.ONE,
-                opts
-        );
-        System.out.println(objectToString(receiptData));
+        // Signing process
+        System.out.println("Add a senderKeyring to `caver.wallet`.");
+        caver.wallet.add(senderKeyring);
+        System.out.println("Sign the transaction using `caver.wallet`.");
+        caver.wallet.sign(senderKeyring.getAddress(), vt);
+        System.out.println("Signature was added, so we can see the signature of sender.");
+        System.out.println(objectToString(vt.getSignatures())); // Must contains signature
     }
 }
