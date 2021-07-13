@@ -24,8 +24,8 @@ KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입해야 �
 ## 2. 사용법
 1. 이 프로젝트를 클론합니다. `$ git clone https://github.com/klaytn/caver-java-examples.git`
 2. 예제를 실행하기 위해서는 [KAS Console](https://console.klaytnapi.com/ko/security/credential)에서 발급받은 credential 과 위에서 발급받은 클레이튼 계정을 설정해야 합니다. 실습에 사용하는 계정은 테스트 용도의 계정만 사용하는 것을 권장합니다.
-    * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용에 정의합니다. 이 파일에 정의된 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/Boilerplate.java` 파일의 `loadEnv` 메서드에서 `.env` 파일에 정의된 변수들을 읽어오는 코드가 있으니 참고하시기 바랍니다.
-    * 옵션 2: 원하는 시나리오에 해당하는 `Boilerplate.java` 파일을 열고 Boilerplate class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
+    * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용에 정의합니다. 이 파일에 정의된 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/CaverExample.java` 파일의 `loadEnv` 메서드에서 `.env` 파일에 정의된 변수들을 읽어오는 코드가 있으니 참고하시기 바랍니다.
+    * 옵션 2: 원하는 시나리오에 해당하는 `CaverExample.java` 파일을 열고 CaverExample class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
 3. 사용하시는 터미널에서 원하는 시나리오로 디렉토리를 이동하신 뒤 `./gradlew run`을 실행합니다.
     * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
     * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`
