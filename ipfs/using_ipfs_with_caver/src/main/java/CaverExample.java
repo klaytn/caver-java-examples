@@ -20,11 +20,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Boilerplate code about "Using IPFS with Caver."
+ * Example code about "Using IPFS with Caver."
  * Related article - Korean: https://medium.com/klaytn/caver%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-ipfs-%EC%82%AC%EC%9A%A9%EB%B2%95-4889a3b29c0b
  * Related article - English: https://medium.com/klaytn/using-ipfs-with-caver-964e1f721bfe
  */
-public class Boilerplate {
+public class CaverExample {
     // You can directly input values for the variables below, or you can enter values in the caver-java-examples/.env file.
     private static String nodeApiUrl = ""; // e.g. "https://node-api.klaytnapi.com/v1/klaytn";
     private static String accessKeyId = ""; // e.g. "KASK1LVNO498YT6KJQFUPY8S";
@@ -81,7 +81,7 @@ public class Boilerplate {
         // `ipfs.txt` is located at `caver-java-examples/ipfs/using_ipfs_with_caver/resources`.
         File testFile = new File("resources/ipfs.txt");
         if (testFile.exists() == false) {
-            // Handles when you run this Boilerplate as sub-module using IDE.
+            // Handles when you run this CaverExample as sub-module using IDE.
             testFile = new File("ipfs/using_ipfs_with_caver/resources/ipfs.txt");
             if (testFile.exists() == false) {
                 throw new FileNotFoundException("Cannot find ipfs.txt testFile.");

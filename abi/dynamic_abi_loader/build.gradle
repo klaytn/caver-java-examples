@@ -24,7 +24,7 @@ dependencies {
 }
 
 task run(type: JavaExec) {
-    group = "Boilerplate"
+    group = "CaverExample"
     classpath = sourceSets.main.runtimeClasspath
-    mainClass.set("Boilerplate")
+    mainClass.set("CaverExample")
 }
