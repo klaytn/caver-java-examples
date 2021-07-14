@@ -2,6 +2,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.klaytn.caver.Caver;
+import com.klaytn.caver.methods.response.Bytes32;
 import com.klaytn.caver.methods.response.TransactionReceipt;
 import com.klaytn.caver.transaction.TxPropertyBuilder;
 import com.klaytn.caver.transaction.response.PollingTransactionReceiptProcessor;
@@ -106,7 +107,8 @@ public class CaverExample {
                         .setGas(BigInteger.valueOf(25000))
         );
         caver.wallet.sign(senderKeyring.getAddress(), vt);
-        String txHash = caver.rpc.klay.sendRawTransaction(vt).send().getResult();
+        Bytes32 sendResult = caver.rpc.klay.sendRawTransaction(vt).send();
+        String txHash = sendResult.getResult();
         PollingTransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(caver, 1000, 15);
         TransactionReceipt.TransactionReceiptData receiptData = receiptProcessor.waitForTransactionReceipt(txHash);
         System.out.println(objectToString(receiptData));
