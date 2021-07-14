@@ -90,11 +90,12 @@ public class CaverExample {
         AbstractKeyring deployerKeyring = caver.wallet.keyring.decrypt(keyStore, password);
         caver.wallet.add(deployerKeyring);
 
+        BigInteger initialSupply = new BigInteger("1000000000000000000");
         KIP7DeployParams params = new KIP7DeployParams(
                 "TestToken",
                 "TTK",
                 18,
-                new BigInteger("1000000000000000000")
+                initialSupply
         );
         KIP7 kip7 = caver.kct.kip7.deploy(params, deployerKeyring.getAddress());
         System.out.println("Deployed address of KIP7 token contract: " + kip7.getContractAddress());
