@@ -30,6 +30,13 @@ KAS를 사용하기 위해서는 [KAS](https://klaytnapi.com)에 가입해야 �
     * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
     * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`
 
+### 2.1 Hello World
+시나리오에 관계 없이 바로 caver를 사용해보고 싶다면 `hello_world` 를 실행해보시기 바랍니다. 아래와 같이 `hello_world` 디렉토리로 이동하신 뒤 `./gradlew run` 으로 실행할 수 있습니다.
+
+`$ cd hello_world && ./gradlew run`
+
+`caver-java-examples/hello_world/src/main/java/CaverExample.java` 파일의 `run` 메서드에 caver를 사용하는 코드를 자유롭게 작성하고 테스트해보시기 바랍니다.
+
 ## 3. 프로젝트 구조
 caver-java-examples 프로젝트의 구조에 대해 설명합니다.
 
