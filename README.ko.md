@@ -8,7 +8,7 @@
 * [Gradle 7.1](https://gradle.org/install/)
 
 ### 1.2 KAS 회원가입
-Klaytn SDK([caver-java](https://github.com/klaytn/caver-java))는 Klaytn 네트워크를 구성하는 Node를 연결하여 사용할 수 있으며, caver-java-examples 프로젝트에서는 사용자들이 [EN](https://docs.klaytn.com/node/endpoint-node)을 직접 운영하지 않고 예제코드들을 테스트 할 수 있도록 [KAS](https://klaytnapi.com)의 [NODE API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다.
+Klaytn SDK([caver-java](https://github.com/klaytn/caver-java))는 Klaytn 네트워크를 구성하는 노드를 연결해 사용할 수 있는데, caver-java-examples 프로젝트에서는 [KAS](https://klaytnapi.com)의 [Node API](https://refs.klaytnapi.com/en/node/latest)를 사용합니다. 따라서 사용자는 [엔드포인트 노드(EN)](https://docs.klaytn.com/node/endpoint-node)를 직접 운영하지 않아도 예제코드를 테스트 할 수 있습니다.
 
 KAS를 사용하려면 먼저 [KAS](https://klaytnapi.com)에 가입하고, 예제코드 실행에 필요한 `AccessKey ID`와 `Secret AccessKey`를 발급 받습니다.
 발급 받은 `AccessKey ID`와 `Secret AccessKey`의 사용 방법은 [2. 사용법](https://github.com/klaytn/caver-java-examples/blob/master/README.ko.md#2-%EC%82%AC%EC%9A%A9%EB%B2%95)에서 확인할 수 있습니다.
@@ -24,8 +24,8 @@ KAS를 사용하려면 먼저 [KAS](https://klaytnapi.com)에 가입하고, 예�
 ## 2. 사용법
 1. 이 프로젝트를 클론합니다. 터미널에서 `$ git clone https://github.com/klaytn/caver-java-examples.git`을 실행하세요.
 2. 예제를 실행하려면 [KAS Console](https://console.klaytnapi.com/ko/security/credential)에서 발급받은 Credential(AccessKey ID와 Secret AccessKey)과 [Klaytn Wallet 테스트넷](https://baobab.wallet.klaytn.com/create)에서 발급받은 Klaytn 계정을 설정해야 합니다. 실습에 사용하는 계정은 테스트 용도로만 사용할 것을 권장합니다.
-    * 옵션 1(권장): `caver-java-examples/.env` 파일의 내용에 정의합니다. 이 파일에 정의된 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 `src/main/java/CaverExample.java` 파일의 `loadEnv` 메서드에서 `.env` 파일에 정의된 변수들을 읽어오는 코드가 있으니 참고하시기 바랍니다.
-    * 옵션 2: 원하는 시나리오에 해당하는 `CaverExample.java` 파일을 열고 CaverExample class 밑에 정의되어 있는 `private static`으로 선언된 변수들의 값을 채워줍니다.
+    * 옵션 1(권장): **caver-java-examples/.env** 파일에 발급 받은 Credential과 Klaytn 계정을 정의합니다. 이 파일에 정의된 내용은 모든 시나리오에 공통 적용됩니다. 각 시나리오의 **src/main/java/CaverExample.java** 파일 `loadEnv` 메서드에서 **.env** 파일에 정의한 변수들을 읽어오는 코드가 있으니 참고하시기 바랍니다.
+    * 옵션 2: 원하는 시나리오에 해당하는 **CaverExample.java** 파일을 열고 **CaverExample** 클래스 하위에 정의된, `private static`으로 선언된 변수의 값을 채웁니다.
 3. 터미널에서 원하는 시나리오의 디렉토리로 이동한 후 `./gradlew run`을 실행합니다.
     * 예시 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
     * 예시 2: `$ cd contract/fee_delegation && ./gradlew run`
@@ -35,7 +35,7 @@ KAS를 사용하려면 먼저 [KAS](https://klaytnapi.com)에 가입하고, 예�
 
 `$ cd hello_world && ./gradlew run`
 
-`caver-java-examples/hello_world/src/main/java/CaverExample.java` 파일의 `run` 메서드에 caver를 사용하는 코드를 자유롭게 작성하고 테스트해 보세요.
+**caver-java-examples/hello_world/src/main/java/CaverExample.java** 파일의 `run` 메서드에 caver를 사용하는 코드를 자유롭게 작성하고 테스트해 보세요.
 
 ## 3. 프로젝트 구조
 caver-java-examples 프로젝트 구조를 설명합니다.
@@ -57,7 +57,7 @@ account
 ├── update_account_with_account_key_role_based
 └── update_account_with_account_key_weighted_multisig
 ```
-* 각 시나리오는 개별 Gradle 프로젝트로써 시나리오별 `build.gradle`과 `settings.gradle` 파일을 포함하며, 해당 시나리오에 특정 파일이 필요한 경우 `resources` 디렉토리를 구성합니다.
+* 각 시나리오는 개별 Gradle 프로젝트로써 시나리오별 **build.gradle**과 **settings.gradle** 파일을 포함하며, 해당 시나리오에 특정 파일이 필요한 경우 `resources` 디렉토리를 구성합니다.
 * 이는 사용자가 예제를 바로 실행해 볼 수 있도록 구성하기 위함입니다.
 
 ### 3.2 Summary
