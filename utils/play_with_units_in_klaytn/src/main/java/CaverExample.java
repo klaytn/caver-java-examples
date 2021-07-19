@@ -89,8 +89,9 @@ public class CaverExample {
         vt.setValue(new BigDecimal(caver.utils.convertToPeb("0.5", Utils.KlayUnit.KLAY)).toBigInteger());
         System.out.println("Example-1) The value what we set using option-1 is " + vt.getValue());
 
-        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.5 KLAY,
         // option-2 (Not recommended): Set actual peb value directly to ValueTransfer transaction instance.
+        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.5 KLAY,
+        // you must set 500000000000000000(= 5 * (10^17) as a value of Transaction.
         vt.setValue(BigInteger.valueOf(500000000000000000L)); // 5 * (10^17)
         System.out.println("Example-1) The value what we set using option-2 is " + vt.getValue());
 
@@ -99,8 +100,9 @@ public class CaverExample {
         vt.setValue(new BigDecimal(caver.utils.convertToPeb("0.05", Utils.KlayUnit.KLAY)).toBigInteger());
         System.out.println("Example-2) The value what we set using option-1 is " + vt.getValue());
 
-        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.05 KLAY,
         // option-2 (Not recommended): Set actual peb value directly to ValueTransfer transaction instance.
+        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.05 KLAY,
+        // you must set 50000000000000000(= 5 * (10^16) as a value of Transaction.
         vt.setValue(BigInteger.valueOf(50000000000000000L)); // 5 * (10^16)
         System.out.println("Example-2) The value what we set using option-2 is " + vt.getValue());
 
@@ -109,8 +111,9 @@ public class CaverExample {
         vt.setValue(new BigInteger(caver.utils.convertToPeb(BigDecimal.valueOf(5), Utils.KlayUnit.mKLAY)));
         System.out.println("Example-3) The value what we set using option-1 is " + vt.getValue());
 
-        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.005 KLAY,
         // option-2 (Not recommended): Set actual peb value directly to ValueTransfer transaction instance.
+        // 1 KLAY is actually 10^18(=1000000000000000000) peb. So if you want send 0.005 KLAY,
+        // you must set 5000000000000000(= 5 * (10^15) as a value of Transaction.
         vt.setValue(BigInteger.valueOf(5000000000000000L)); // 5 * (10^15)
         System.out.println("Example-3) The value what we set using option-2 is " + vt.getValue());
 
