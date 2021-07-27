@@ -149,13 +149,13 @@ public class CaverExample {
         contract.deploy(sendOptionsForDeployment, byteCode, keyString, "valueString");
         System.out.println("The address of deployed smart contract: " + contract.getContractAddress());
 
-        // // The sender and fee payer each sign the transaction to deploy a smart contract.
+        // // The deployer and fee payer each sign the transaction to deploy a smart contract.
         // SendOptions sendOptionsForSigning = new SendOptions();
         // sendOptionsForSigning.setFrom(deployerKeyring.getAddress());
         // sendOptionsForSigning.setGas(BigInteger.valueOf(1000000));
         // sendOptionsForSigning.setFeeDelegation(true);
         // AbstractTransaction signedTx = contract.sign(sendOptionsForSigning, "constructor", byteCode, keyString, "valueString");
-        // System.out.println("Sender signed transaction: ");
+        // System.out.println("Deployer signed transaction: ");
         // System.out.println(objectToString(signedTx));
 
         // caver.wallet.signAsFeePayer(feePayerKeyring.getAddress(), (AbstractFeeDelegatedTransaction)signedTx); // Signs the transaction as a fee payer
@@ -180,8 +180,8 @@ public class CaverExample {
         TransactionReceipt.TransactionReceiptData receiptData = contract.send(sendOptionsForExecution, "set", "key_inserted", "value_inserted");
         System.out.println(objectToString(receiptData));
 
-        // // If the transaction cannot be sent right away because the sender and fee payer are owned by different people, they each have to sign the transaction separately.
-        // // The sender and fee payer each sign the transaction to deploy a smart contract.
+        // // If the transaction cannot be sent right away because the deployer and fee payer are owned by different people, they each have to sign the transaction separately.
+        // // The deployer and fee payer each sign the transaction to deploy a smart contract.
         // SendOptions sendOptionsForExecution = new SendOptions();
         // sendOptionsForExecution.setFrom(deployerKeyring.getAddress());
         // sendOptionsForExecution.setGas(BigInteger.valueOf(1000000));
