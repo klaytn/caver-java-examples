@@ -28,7 +28,7 @@ Because the code samples also involves sending a transaction to Klaytn, you need
 1. Clone this project and then execute `$ git clone https://github.com/klaytn/caver-java-examples.git` in Terminal.
 2. To run the samples, you need to set the Credential (AccessKey ID and Secret AccessKey) which can be obtained on [KAS Console](https://console.klaytnapi.com/ko/security/credential) as well as a Klaytn account obtained on [Klaytn Wallet Testnet](https://baobab.wallet.klaytn.com/create). We recommend using the test account just for testing.
     * Option 1 (recommended): Define the Credential information and your Klaytn account in the **caver-java-examples/.env** file. The variables defined in this file apply for all scenarios. You can find the code for retrieving the variables defined in the **.env** file in the `loadEnv` method within **src/main/java/CaverExample.java**.
-    * Option 2: Open the **CaverExample.java** file for a specific scenario and fill in the variables declared as `private static`, defined unter the **CaverExample** class.
+    * Option 2: Open the **CaverExample.java** file for a specific scenario and fill in the variables declared as `private static`, defined under the **CaverExample** class.
 3. In Terminal, checkout to the directory of the scenario and run `./gradlew run`.
     * Example 1: `$ cd account/update_account_with_account_key_public && ./gradlew run`
     * Example 2: `$ cd contract/fee_delegation && ./gradlew run`
