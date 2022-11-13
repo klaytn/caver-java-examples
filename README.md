@@ -1,5 +1,9 @@
 *Read this in Korean:* [Korean](https://github.com/klaytn/caver-java-examples/blob/master/README.ko.md) 
 
+# Branch name will be changed
+
+We will change the `master` branch to `main` on Nov 1, 2022.
+After the branch policy change, please check your local or forked repository settings.
 
 # caver-java-examples
 **caver-java-examples** provide code samples to help you use the Klaytn SDK([caver-java](https://github.com/klaytn/caver-java)) easier and faster. Here you can find and test code samples conceived for different scenarios.
